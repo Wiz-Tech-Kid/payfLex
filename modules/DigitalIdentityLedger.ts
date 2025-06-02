@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
  */
 export interface UserRecord {
   userHash: string;
-  did: string;
+  did: string; 
   fullName: string;
   email: string;
   phoneNumber: string;
