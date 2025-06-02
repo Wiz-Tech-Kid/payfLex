@@ -1,9 +1,9 @@
-import { useRouter } from 'expo-router';
+import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 export default function LoginScreen() {
-  const router = useRouter();
+  const navigation = useNavigation();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
@@ -30,15 +30,9 @@ export default function LoginScreen() {
         />
         <TouchableOpacity
           style={styles.button}
-          onPress={() => router.replace('./screens/HomeTabs')}
+          onPress={() => navigation.replace('HomeTabs' as never)}
         >
           <Text style={styles.buttonText}>Login</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.createAccountButton}
-          onPress={() => router.push('/screens/AccountCreationScreen')}
-        >
-          <Text style={styles.createAccountText}>Create Account</Text>
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
@@ -89,21 +83,6 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  createAccountButton: {
-    width: '100%',
-    marginTop: 16,
-    alignItems: 'center',
-    paddingVertical: 12,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#0a7ea4',
-    backgroundColor: '#fff',
-  },
-  createAccountText: {
-    color: '#0a7ea4',
     fontWeight: 'bold',
     fontSize: 16,
   },
