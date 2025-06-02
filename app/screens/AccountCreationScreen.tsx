@@ -13,8 +13,7 @@ import { registerUser } from '../../modules/DigitalIdentityLedger';
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const phoneRegex = /^\d{8}$/;
-const omangRegex = /^\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])\d{4}$/;
-const GENDER_OPTIONS = ['Auto-detect', 'Male', 'Female'];
+const omangRegex = /^\d{9}$/; // Botswana Omang ID is 9 digits
 
 type RootStackParamList = {
   Login: undefined;
@@ -29,19 +28,8 @@ export default function AccountCreationScreen() {
   const [omangID, setOmangID] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [gender, setGender] = useState('Auto-detect');
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [submitting, setSubmitting] = useState(false);
-
-  // Auto-detect gender from omangID if possible
-  let finalGender: "Male" | "Female" | "Auto-detect" = gender as any;
-  if (
-    gender === 'Auto-detect' &&
-    omangRegex.test(omangID)
-  ) {
-    const seventhDigit = parseInt(omangID[6], 10);
-    finalGender = seventhDigit >= 5 ? 'Male' : 'Female';
-  }
 
   const validate = () => {
     const newErrors: { [key: string]: string } = {};
@@ -51,16 +39,11 @@ export default function AccountCreationScreen() {
     if (!phoneRegex.test(phoneNumber.trim()))
       newErrors.phoneNumber = 'Phone number must be 8 digits.';
     if (!omangRegex.test(omangID.trim()))
-      newErrors.omangID = 'Invalid Omang ID format.';
+      newErrors.omangID = 'Omang ID must be 9 digits.';
     if (password.length < 8)
       newErrors.password = 'Password must be at least 8 characters.';
     if (password !== confirmPassword)
       newErrors.confirmPassword = 'Passwords do not match.';
-    if (
-      finalGender !== 'Male' &&
-      finalGender !== 'Female'
-    )
-      newErrors.gender = 'Gender must be Male or Female.';
     return newErrors;
   };
 
@@ -73,12 +56,18 @@ export default function AccountCreationScreen() {
     }
     setSubmitting(true);
     try {
+      // Auto-detect gender from Omang ID
+      let detectedGender: "Male" | "Female" = "Male";
+      if (omangID.length === 9) {
+        const seventhDigit = parseInt(omangID[6], 10);
+        detectedGender = seventhDigit >= 5 ? "Male" : "Female";
+      }
       const { userHash, did } = await registerUser({
         fullName: fullName.trim(),
         email: email.trim().toLowerCase(),
         phoneNumber: phoneNumber.trim(),
         omangID: omangID.trim(),
-        gender: finalGender as 'Male' | 'Female',
+        gender: detectedGender,
         password: password.trim(),
       });
       Alert.alert(
@@ -136,45 +125,13 @@ export default function AccountCreationScreen() {
         {/* Omang ID */}
         <TextInput
           style={styles.input}
-          placeholder="Omang ID"
+          placeholder="Omang ID (9 digits)"
           value={omangID}
           onChangeText={setOmangID}
           keyboardType="number-pad"
           maxLength={9}
         />
         {errors.omangID && <Text style={styles.error}>{errors.omangID}</Text>}
-
-        {/* Gender Dropdown */}
-        <View style={styles.dropdownContainer}>
-          <Text style={styles.dropdownLabel}>Gender</Text>
-          <View style={styles.dropdownRow}>
-            {GENDER_OPTIONS.map(option => (
-              <TouchableOpacity
-                key={option}
-                style={[
-                  styles.genderOption,
-                  gender === option && styles.genderOptionSelected,
-                ]}
-                onPress={() => setGender(option)}
-              >
-                <Text
-                  style={[
-                    styles.genderOptionText,
-                    gender === option && styles.genderOptionTextSelected,
-                  ]}
-                >
-                  {option}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
-        {errors.gender && <Text style={styles.error}>{errors.gender}</Text>}
-        {gender === 'Auto-detect' && omangRegex.test(omangID) && (
-          <Text style={styles.autodetectInfo}>
-            Auto-detected: {finalGender}
-          </Text>
-        )}
 
         {/* Password */}
         <TextInput
