@@ -1,7 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Crypto from 'expo-crypto';
 import * as FileSystem from 'expo-file-system';
-import { v4 as uuidv4 } from 'uuid';
 
 /**
  * User record for the digital identity ledger.
@@ -60,7 +59,18 @@ export async function registerUser(params: {
   gender: "Male" | "Female";
   password: string;
 }): Promise<{ userHash: string; did: string }> {
-  const { fullName, email, phoneNumber, omangID, gender, password } = params;
+  const { fullName, email, phoneNumber, omangID, password } = params;
+
+  // Validate Omang ID
+  if (!/^\d{9}$/.test(omangID)) {
+    throw new Error('Omang ID must be 9 digits.');
+  }
+
+  // Auto-detect gender from Omang ID
+  let gender: "Male" | "Female" = "Male";
+  const seventhDigit = parseInt(omangID[6], 10);
+  gender = seventhDigit >= 5 ? "Male" : "Female";
+
   const userHash = await computeUserHash(omangID, phoneNumber);
   const did = "did:bw:" + uuidv4();
   const passwordHash = await hashPassword(password);
@@ -131,4 +141,13 @@ export async function getUserByDid(did: string): Promise<UserRecord | null> {
  */
 export async function getCurrentDid(): Promise<string | null> {
   return await AsyncStorage.getItem('userDid');
+}
+
+// Add a simple UUID v4 generator (not cryptographically secure, but works for Expo)
+function uuidv4() {
+  // @ts-ignore
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
 }
