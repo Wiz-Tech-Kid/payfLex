@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { CommonActions, useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
@@ -151,76 +150,6 @@ export default function LoginScreen() {
         </KeyboardAvoidingView>
       </LinearGradient>
     </>
-=======
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
-import React, { useState } from 'react';
-import { Alert, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { hashPassword, readUsers } from '../../modules/DigitalIdentityLedger';
-
-export default function LoginScreen() {
-  const navigation = useNavigation();
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [submitting, setSubmitting] = useState(false);
-
-  const handleLogin = async () => {
-    setSubmitting(true);
-    try {
-      const users = await readUsers();
-      const passwordHash = await hashPassword(password);
-      // Allow login by email or phone number
-      const user = users.find(
-        u =>
-          (u.email.toLowerCase() === username.trim().toLowerCase() ||
-            u.phoneNumber === username.trim()) &&
-          u.passwordHash === passwordHash
-      );
-      if (!user) {
-        Alert.alert('Login Failed', 'Invalid credentials.');
-        setSubmitting(false);
-        return;
-      }
-      await AsyncStorage.setItem('userDid', user.did);
-      navigation.navigate('HomeTabs' as never);
-    } catch (err: any) {
-      Alert.alert('Error', err?.message || 'Login failed.');
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
-      <View style={styles.card}>
-        <Text style={styles.title}>Login</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Email or Username"
-          value={username}
-          onChangeText={setUsername}
-          autoCapitalize="none"
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
-        <TouchableOpacity
-          style={[styles.button, submitting && { opacity: 0.7 }]}
-          onPress={handleLogin}
-          disabled={submitting}
-        >
-          <Text style={styles.buttonText}>{submitting ? 'Logging in...' : 'Login'}</Text>
-        </TouchableOpacity>
-      </View>
-    </KeyboardAvoidingView>
->>>>>>> 6dd516136125553f610324d8f1285c3ac3d4712b
   );
 }
 

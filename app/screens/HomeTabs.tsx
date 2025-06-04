@@ -294,7 +294,11 @@ export default function Home() {
       {/* Bottom Navigation - Mock component */}
       <View style={styles.bottomNav}>
         <Text style={styles.bottomNavText}>🏠 Home</Text>
-        <Text style={styles.bottomNavText}>📊 Loans</Text>
+         <TouchableOpacity 
+                onPress={() => router.push('/screens/LoanApplication')}
+              >
+                <Text style={styles.bottomNavText}>📊 Loans</Text>
+              </TouchableOpacity>
         <Text style={styles.bottomNavText}>💳 Payments</Text>
         <Text style={styles.bottomNavText}>👤 Profile</Text>
       </View>
