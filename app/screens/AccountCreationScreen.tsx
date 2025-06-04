@@ -19,7 +19,8 @@ const { width, height } = Dimensions.get('window');
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const phoneRegex = /^\d{8}$/;
-const omangRegex = /^\d{9}$/; // Botswana Omang ID is 9 digits
+const omangRegex = /^\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])\d{4}$/;
+const GENDER_OPTIONS = ['Auto-detect', 'Male', 'Female'];
 
 type RootStackParamList = {
   Login: undefined;
@@ -40,7 +41,6 @@ const getInputIcon = (field: string) => {
 
 export default function AccountCreationScreen() {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-<<<<<<< HEAD
   const [fullName, setFullName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [phoneNumber, setPhoneNumber] = useState<string>('');
@@ -48,18 +48,20 @@ export default function AccountCreationScreen() {
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
   const [gender, setGender] = useState<string>('Auto-detect');
-=======
-  const [fullName, setFullName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [omangID, setOmangID] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
->>>>>>> 6dd516136125553f610324d8f1285c3ac3d4712b
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [focusedInput, setFocusedInput] = useState<string | null>(null);
   const [buttonScale] = useState(new Animated.Value(1));
+
+  // Auto-detect gender from omangID if possible
+  let finalGender: "Male" | "Female" | "Auto-detect" = gender as any;
+  if (
+    gender === 'Auto-detect' &&
+    omangRegex.test(omangID)
+  ) {
+    const seventhDigit = parseInt(omangID[6], 10);
+    finalGender = seventhDigit >= 5 ? 'Male' : 'Female';
+  }
 
   const validate = () => {
     const newErrors: { [key: string]: string } = {};
@@ -69,11 +71,16 @@ export default function AccountCreationScreen() {
     if (!phoneRegex.test(phoneNumber.trim()))
       newErrors.phoneNumber = 'Phone number must be 8 digits.';
     if (!omangRegex.test(omangID.trim()))
-      newErrors.omangID = 'Omang ID must be 9 digits.';
+      newErrors.omangID = 'Invalid Omang ID format.';
     if (password.length < 8)
       newErrors.password = 'Password must be at least 8 characters.';
     if (password !== confirmPassword)
       newErrors.confirmPassword = 'Passwords do not match.';
+    if (
+      finalGender !== 'Male' &&
+      finalGender !== 'Female'
+    )
+      newErrors.gender = 'Gender must be Male or Female.';
     return newErrors;
   };
 
@@ -100,18 +107,12 @@ export default function AccountCreationScreen() {
     }
     setSubmitting(true);
     try {
-      // Auto-detect gender from Omang ID
-      let detectedGender: "Male" | "Female" = "Male";
-      if (omangID.length === 9) {
-        const seventhDigit = parseInt(omangID[6], 10);
-        detectedGender = seventhDigit >= 5 ? "Male" : "Female";
-      }
       const { userHash, did } = await registerUser({
         fullName: fullName.trim(),
         email: email.trim().toLowerCase(),
         phoneNumber: phoneNumber.trim(),
         omangID: omangID.trim(),
-        gender: detectedGender,
+        gender: finalGender as 'Male' | 'Female',
         password: password.trim(),
       });
       Alert.alert(
@@ -136,7 +137,6 @@ export default function AccountCreationScreen() {
     }
   };
 
-<<<<<<< HEAD
   const renderInput = (
     value: string,
     onChangeText: (text: string) => void,
@@ -161,83 +161,6 @@ export default function AccountCreationScreen() {
       />
       <View style={styles.inputIcon}>
         <Text style={styles.iconText}>{getInputIcon(field)}</Text>
-=======
-  return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.card}>
-        <Text style={styles.title}>Create Account</Text>
-        {/* Full Name */}
-        <TextInput
-          style={styles.input}
-          placeholder="Full Name"
-          value={fullName}
-          onChangeText={setFullName}
-        />
-        {errors.fullName && <Text style={styles.error}>{errors.fullName}</Text>}
-
-        {/* Email */}
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          value={email}
-          onChangeText={setEmail}
-          autoCapitalize="none"
-          keyboardType="email-address"
-        />
-        {errors.email && <Text style={styles.error}>{errors.email}</Text>}
-
-        {/* Phone Number */}
-        <TextInput
-          style={styles.input}
-          placeholder="Phone Number (8 digits)"
-          value={phoneNumber}
-          onChangeText={setPhoneNumber}
-          keyboardType="number-pad"
-          maxLength={8}
-        />
-        {errors.phoneNumber && <Text style={styles.error}>{errors.phoneNumber}</Text>}
-
-        {/* Omang ID */}
-        <TextInput
-          style={styles.input}
-          placeholder="Omang ID (9 digits)"
-          value={omangID}
-          onChangeText={setOmangID}
-          keyboardType="number-pad"
-          maxLength={9}
-        />
-        {errors.omangID && <Text style={styles.error}>{errors.omangID}</Text>}
-
-        {/* Password */}
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
-        {errors.password && <Text style={styles.error}>{errors.password}</Text>}
-
-        {/* Confirm Password */}
-        <TextInput
-          style={styles.input}
-          placeholder="Confirm Password"
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-          secureTextEntry
-        />
-        {errors.confirmPassword && <Text style={styles.error}>{errors.confirmPassword}</Text>}
-
-        <TouchableOpacity
-          style={[styles.button, submitting && { opacity: 0.7 }]}
-          onPress={handleSubmit}
-          disabled={submitting}
-        >
-          <Text style={styles.buttonText}>
-            {submitting ? 'Creating...' : 'Create Account'}
-          </Text>
-        </TouchableOpacity>
->>>>>>> 6dd516136125553f610324d8f1285c3ac3d4712b
       </View>
       {errors[field] && <Text style={styles.error}>{errors[field]}</Text>}
     </View>
