@@ -150,6 +150,46 @@ export default function LoginScreen() {
                 <Text style={styles.signUpText}>Sign Up</Text>
               </TouchableOpacity>
             </View>
+     {/* Toggle Botsonic Chatbot */}
+            <TouchableOpacity style={styles.chatbotButton} onPress={() => setShowChatbot(!showChatbot)}>
+              <Text style={styles.chatbotButtonText}>{showChatbot ? "Hide Chatbot" : "Open Chatbot"}</Text>
+            </TouchableOpacity>
+
+            {/* Embedded Botsonic Chatbot */}
+            {showChatbot && (
+              <View style={{ height: 400, width: '100%', marginTop: 20 }}>
+                <WebView
+                  source={{
+                    html: `
+                    <!DOCTYPE html>
+                    <html>
+                    <head><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+                    <body>
+                      <script>
+                        (function (w, d, s, o, f, js, fjs) {
+                          w["botsonic_widget"] = o;
+                          w[o] = w[o] || function () {
+                            (w[o].q = w[o].q || []).push(arguments);
+                          };
+                          (js = d.createElement(s)), (fjs = d.getElementsByTagName(s)[0]);
+                          js.id = o;
+                          js.src = f;
+                          js.async = 1;
+                          fjs.parentNode.insertBefore(js, fjs);
+                        })(window, document, "script", "Botsonic", "https://widget.botsonic.com/CDN/botsonic.min.js");
+                        Botsonic("init", {
+                          serviceBaseUrl: "https://api-azure.botsonic.ai",
+                          token: "0dfc3446-e750-4841-a1bf-4c79da9372bd",
+                        });
+                      </script>
+                    </body>
+                    </html>
+                    `
+                  }}
+                  style={{ flex: 1, borderRadius: 10 }}
+                />
+              </View>
+            )}
           </View>
         </KeyboardAvoidingView>
       </LinearGradient>
