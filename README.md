@@ -28,8 +28,9 @@ In the output, you'll find options to open the app in a
 
 You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
-💬 Embedding the AI Chatbot
-PayFLex integrates an AI-powered chatbot using React Native WebView, enabling direct interaction within the app.
+💬 AI Chatbot Integration
+
+PayFLex integrates an AI-driven chatbot using React Native WebView, providing seamless in-app interaction. To enable this feature, install WebView:
 
 🚀 Installation
 To add WebView support, install the necessary package:
