@@ -363,4 +363,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
   },
+  chatbotButton: {
+    marginTop: 20,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    backgroundColor: '#667eea',
+    borderRadius: 16,
+    alignItems: 'center',
+  },
+  chatbotButtonText: {
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: 16,
+  },
+});
 });
