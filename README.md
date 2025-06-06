@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # PayFLex
 
 ## Welcome to your Expo app 👋
@@ -5,6 +6,16 @@
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
 ### Get started
+=======
+<<<<<<< HEAD
+# PayFLex🚀
+=======
+# Welcome to your Expo app 👋
+
+This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+
+📦Get started
+>>>>>>> 60740f333462f055e0448f6983faf0ec73b30039
 
 1. Install dependencies
 
@@ -27,7 +38,21 @@ In the output, you'll find options to open the app in a
 
 You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
+<<<<<<< HEAD
 ### Get a fresh project
+=======
+💬 AI Chatbot Integration
+
+PayFLex integrates an AI-driven chatbot using React Native WebView, providing seamless in-app interaction. To enable this feature, install WebView:
+
+🚀 Installation
+To add WebView support, install the necessary package:
+
+```bash
+npm install react-native-webview
+```
+🔄Get a fresh project
+>>>>>>> 60740f333462f055e0448f6983faf0ec73b30039
 
 When you're ready, run:
 
@@ -37,7 +62,11 @@ npm run reset-project
 
 This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
 
+<<<<<<< HEAD
 ### Learn more
+=======
+📚Learn more
+>>>>>>> 60740f333462f055e0448f6983faf0ec73b30039
 
 To learn more about developing your project with Expo, look at the following resources:
 

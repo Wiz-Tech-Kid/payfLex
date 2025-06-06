@@ -324,7 +324,21 @@ export default function Home() {
           </View>
         </View>
       </ScrollView>
+<<<<<<< HEAD
       {/* Removed mock bottom navigation */}
+=======
+      {/* Bottom Navigation - Mock component */}
+      <View style={styles.bottomNav}>
+        <Text style={styles.bottomNavText}>🏠 Home</Text>
+         <TouchableOpacity 
+                onPress={() => router.push('/screens/LoanApplication')}
+              >
+                <Text style={styles.bottomNavText}>📊 Loans</Text>
+              </TouchableOpacity>
+        <Text style={styles.bottomNavText}>💳 Payments</Text>
+        <Text style={styles.bottomNavText}>👤 Profile</Text>
+      </View>
+>>>>>>> 60740f333462f055e0448f6983faf0ec73b30039
     </SafeAreaView>
   );
 }

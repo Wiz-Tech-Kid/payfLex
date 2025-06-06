@@ -19,8 +19,14 @@ import { isValidBotswanaPhone } from '../../utils/didStorage';
 const { width, height } = Dimensions.get('window');
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+<<<<<<< HEAD
 const phoneRegex = /^\+2677\d{7}$/;
 const omangRegex = /^\d{9}$/;
+=======
+const phoneRegex = /^\d{8}$/;
+const omangRegex = /^\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])\d{4}$/;
+const GENDER_OPTIONS = ['Auto-detect', 'Male', 'Female'];
+>>>>>>> 60740f333462f055e0448f6983faf0ec73b30039
 
 type RootStackParamList = {
   Login: undefined;
@@ -40,26 +46,61 @@ const getInputIcon = (field: string) => {
 
 export default function AccountCreationScreen() {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+<<<<<<< HEAD
 
+=======
+>>>>>>> 60740f333462f055e0448f6983faf0ec73b30039
   const [fullName, setFullName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [phoneNumber, setPhoneNumber] = useState<string>('');
   const [omangID, setOmangID] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
+<<<<<<< HEAD
+=======
+  const [gender, setGender] = useState<string>('Auto-detect');
+>>>>>>> 60740f333462f055e0448f6983faf0ec73b30039
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [focusedInput, setFocusedInput] = useState<string | null>(null);
   const [buttonScale] = useState(new Animated.Value(1));
 
+  // Auto-detect gender from omangID if possible
+  let finalGender: "Male" | "Female" | "Auto-detect" = gender as any;
+  if (
+    gender === 'Auto-detect' &&
+    omangRegex.test(omangID)
+  ) {
+    const seventhDigit = parseInt(omangID[6], 10);
+    finalGender = seventhDigit >= 5 ? 'Male' : 'Female';
+  }
+
   const validate = () => {
     const newErrors: { [key: string]: string } = {};
     if (!fullName.trim()) newErrors.fullName = 'Full name is required.';
+<<<<<<< HEAD
     if (!emailRegex.test(email.trim())) newErrors.email = 'Invalid email address.';
     if (!isValidBotswanaPhone(phoneNumber.trim())) newErrors.phoneNumber = 'Phone must be in format +2677XXXXXXX.';
     if (!omangRegex.test(omangID.trim())) newErrors.omangID = 'Omang ID must be 9 digits.';
     if (password.length < 8) newErrors.password = 'Password must be at least 8 characters.';
     if (password !== confirmPassword) newErrors.confirmPassword = 'Passwords do not match.';
+=======
+    if (!emailRegex.test(email.trim()))
+      newErrors.email = 'Invalid email address.';
+    if (!phoneRegex.test(phoneNumber.trim()))
+      newErrors.phoneNumber = 'Phone number must be 8 digits.';
+    if (!omangRegex.test(omangID.trim()))
+      newErrors.omangID = 'Invalid Omang ID format.';
+    if (password.length < 8)
+      newErrors.password = 'Password must be at least 8 characters.';
+    if (password !== confirmPassword)
+      newErrors.confirmPassword = 'Passwords do not match.';
+    if (
+      finalGender !== 'Male' &&
+      finalGender !== 'Female'
+    )
+      newErrors.gender = 'Gender must be Male or Female.';
+>>>>>>> 60740f333462f055e0448f6983faf0ec73b30039
     return newErrors;
   };
 
@@ -78,11 +119,19 @@ export default function AccountCreationScreen() {
 
     setSubmitting(true);
     try {
+<<<<<<< HEAD
       await registerUser({
+=======
+      const { userHash, did } = await registerUser({
+>>>>>>> 60740f333462f055e0448f6983faf0ec73b30039
         fullName: fullName.trim(),
         email: email.trim().toLowerCase(),
         phoneNumber: phoneNumber.trim(),
         omangID: omangID.trim(),
+<<<<<<< HEAD
+=======
+        gender: finalGender as 'Male' | 'Female',
+>>>>>>> 60740f333462f055e0448f6983faf0ec73b30039
         password: password.trim(),
       });
 
