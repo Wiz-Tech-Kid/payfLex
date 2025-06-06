@@ -108,3 +108,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
+// No changes needed unless you have a floating button here; if so, remove it from login/landing

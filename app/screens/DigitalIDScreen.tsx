@@ -10,6 +10,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import SidebarDrawer from '../../components/ui/SidebarDrawer';
+import { Colors } from '../../constants/Colors';
 import {
   getCurrentDid,
   getUserByDid,
@@ -21,48 +23,73 @@ export default function DigitalIDScreen() {
   const [did, setDid] = useState<string | null>(null);
   const [user, setUser] = useState<UserRecord | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigation = useNavigation<any>();
 
   useEffect(() => {
     let mounted = true;
-    (async () => {
+
+    const loadUserData = async () => {
       setLoading(true);
       setError(null);
+
+      // 1. Fetch current DID (from AsyncStorage or however getCurrentDid is implemented)
       const currentDid = await getCurrentDid();
       if (!mounted) return;
+
+      // 2. If no DID, show error and bail out
       if (!currentDid) {
         setDid(null);
         setUser(null);
-        setError('Please log in first');
+        setError('Please log in first.');
         setLoading(false);
         return;
       }
+
+      // 3. We have a DID, so fetch the corresponding user record
       setDid(currentDid);
       const userRecord = await getUserByDid(currentDid);
       if (!mounted) return;
+
+      // 4. If user not found, set error; otherwise store user
       if (!userRecord) {
         setError('User not found.');
         setUser(null);
+        setDid(null);
       } else {
         setUser(userRecord);
+        setDid(currentDid);
       }
+
       setLoading(false);
-    })();
+    };
+
+    loadUserData();
+
+    // Cleanup: prevent state updates after unmount
     return () => {
       mounted = false;
     };
   }, []);
 
+  const handleSidebarNav = (route: string) => {
+    setSidebarOpen(false);
+    navigation.navigate(route);
+  };
+
   const handleLogout = async () => {
+    setSidebarOpen(false);
     await AsyncStorage.removeItem('userDid');
     Alert.alert('Logged out', 'You have been logged out.', [
       {
         text: 'OK',
-        onPress: () => navigation.navigate('index'),
+        // Replace 'index' with your actual login route if different
+        onPress: () => navigation.navigate('Landing'),
       },
     ]);
   };
 
+  // 1. Loading state
   if (loading) {
     return (
       <View style={styles.centered}>
@@ -71,6 +98,7 @@ export default function DigitalIDScreen() {
     );
   }
 
+  // 2. Error state
   if (error) {
     return (
       <View style={styles.centered}>
@@ -79,6 +107,7 @@ export default function DigitalIDScreen() {
     );
   }
 
+  // 3. No user record (fallback)
   if (!user) {
     return (
       <View style={styles.centered}>
@@ -87,27 +116,38 @@ export default function DigitalIDScreen() {
     );
   }
 
+  // 4. Main UI
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <SidebarDrawer
+        visible={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        onNavigate={handleSidebarNav}
+        onLogout={handleLogout}
+      />
       <Text style={styles.heading}>Your Digital Identity</Text>
       <View style={styles.card}>
         <LabelValue label="Full Name" value={user.fullName} />
         <Divider />
         <LabelValue label="Email" value={user.email} />
         <Divider />
-        <LabelValue label="Phone Number" value={user.phoneNumber} />
+        <LabelValue
+          label="Phone Number"
+          value={user.phone_number || user.phone_number || 'N/A'}
+        />
         <Divider />
         <LabelValue label="Omang ID" value={user.omangID} />
         <Divider />
         <LabelValue label="Gender" value={user.gender} />
         <Divider />
-        <LabelValue label="DID" value={user.did} />
+        <LabelValue label="DID" value={did || 'Not found'} />
         <Divider />
         <LabelValue
           label="Created At"
           value={new Date(user.createdAt).toLocaleString()}
         />
       </View>
+
       <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
         <Text style={styles.logoutButtonText}>Log Out</Text>
       </TouchableOpacity>
@@ -131,7 +171,7 @@ function Divider() {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: '#f2f2f2',
+    backgroundColor: Colors.light.background,
     alignItems: 'center',
     padding: 16,
     paddingTop: 32,
@@ -140,11 +180,11 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 18,
-    color: '#1976d2',
+    color: Colors.light.tint,
     textAlign: 'center',
   },
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: Colors.light.background,
     borderRadius: 14,
     padding: 20,
     width: '100%',
@@ -162,11 +202,11 @@ const styles = StyleSheet.create({
   },
   label: {
     fontWeight: '600',
-    color: '#444',
+    color: Colors.light.icon,
     fontSize: 16,
   },
   value: {
-    color: '#222',
+    color: Colors.light.text,
     fontSize: 16,
     flexShrink: 1,
     textAlign: 'right',
@@ -183,9 +223,10 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     alignItems: 'center',
     width: '100%',
+    marginTop: 24,
   },
   logoutButtonText: {
-    color: '#fff',
+    color: Colors.light.background,
     fontWeight: 'bold',
     fontSize: 17,
   },

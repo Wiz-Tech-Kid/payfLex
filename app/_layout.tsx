@@ -9,6 +9,7 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 // 1. Import QueryClient and QueryClientProvider
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
+import ChatbotFloatingButton from '../components/ui/ChatbotFloatingButton';
 
 // 2. Create a QueryClient instance (outside the component)
 const queryClient = new QueryClient();
@@ -32,6 +33,7 @@ export default function RootLayout() {
           <Stack.Screen name="+not-found" />
         </Stack>
         <StatusBar style="auto" />
+        <ChatbotFloatingButton />
       </ThemeProvider>
     </QueryClientProvider>
   );

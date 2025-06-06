@@ -1,8 +1,7 @@
-
 export type RootStackParamList = {
   HomeTabs: undefined;
   LoanApplication: undefined;
-  Landing: undefined;
-  LoginScreen: undefined;
+ 
+  Login: undefined;
   // Add other screens as needed
 };

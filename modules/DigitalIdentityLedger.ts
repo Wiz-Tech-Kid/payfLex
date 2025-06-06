@@ -10,7 +10,7 @@ export interface UserRecord {
   did: string; 
   fullName: string;
   email: string;
-  phoneNumber: string;
+  phone_number: string;
   omangID: string;
   gender: "Male" | "Female";
   passwordHash: string;
@@ -66,6 +66,11 @@ export async function registerUser(params: {
     throw new Error('Omang ID must be 9 digits.');
   }
 
+  // Validate Botswana phone number
+  if (!/^\+2677\d{7}$/.test(phoneNumber)) {
+    throw new Error('Phone number must be in format +2677XXXXXXX.');
+  }
+
   // Auto-detect gender from Omang ID
   let gender: "Male" | "Female" = "Male";
   const seventhDigit = parseInt(omangID[6], 10);
@@ -81,7 +86,7 @@ export async function registerUser(params: {
     did,
     fullName,
     email,
-    phoneNumber,
+    phone_number: phoneNumber,
     omangID,
     gender,
     passwordHash,

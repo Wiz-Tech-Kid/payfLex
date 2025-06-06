@@ -5,6 +5,8 @@ import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { ActivityIndicator, Alert, Button, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import RNPickerSelect from "react-native-picker-select";
+import SidebarDrawer from '../../components/ui/SidebarDrawer';
+import { Colors } from '../../constants/Colors';
 
 // Types
 type LoanAppResult = {
@@ -49,6 +51,7 @@ export default function LoanApplication() {
   const navigation = useNavigation<any>();
   const queryClient = useQueryClient();
   const [applicationResult, setApplicationResult] = useState<LoanAppResult | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const { control, handleSubmit, formState: { errors, isSubmitting } } = useForm<ApplicationForm>({
     defaultValues: {
@@ -73,7 +76,7 @@ export default function LoanApplication() {
       Alert.alert(
         result.autoApproved ? "Loan Approved!" : "Application Submitted",
         result.autoApproved
-          ? `Your loan of ₦${parseFloat(result.loan.amount).toLocaleString()} has been approved!`
+          ? `Your loan of P${parseFloat(result.loan.amount).toLocaleString()} has been approved!`
           : "Your loan application is under review."
       );
     },
@@ -85,6 +88,16 @@ export default function LoanApplication() {
   // Submit handler
   const onSubmit = (data: ApplicationForm) => {
     applicationMutation.mutate(data);
+  };
+
+  const handleSidebarNav = (route: string) => {
+    setSidebarOpen(false);
+    navigation.navigate(route);
+  };
+
+  const handleLogout = () => {
+    setSidebarOpen(false);
+    // Use navigation logic if needed
   };
 
   if (applicationResult) {
@@ -110,20 +123,20 @@ export default function LoanApplication() {
             </Text>
             <Text style={styles.resultText}>
               {applicationResult.autoApproved
-                ? `Your loan of ₦${parseFloat(applicationResult.loan.amount).toLocaleString()} has been approved instantly.`
+                ? `Your loan of P${parseFloat(applicationResult.loan.amount).toLocaleString()} has been approved instantly.`
                 : "Your application is being reviewed. You'll be notified within 24 hours."
               }
             </Text>
             {applicationResult.autoApproved && (
               <View style={styles.detailsBox}>
-                <Text>Loan Amount: ₦{parseFloat(applicationResult.loan.amount).toLocaleString()}</Text>
+                <Text>Loan Amount: P{parseFloat(applicationResult.loan.amount).toLocaleString()}</Text>
                 <Text>Interest Rate: {applicationResult.loan.interestRate}%</Text>
-                <Text>Monthly Payment: ₦{applicationResult.loan.monthlyPayment.toLocaleString()}</Text>
+                <Text>Monthly Payment: P{applicationResult.loan.monthlyPayment.toLocaleString()}</Text>
                 <Text>Term: {applicationResult.loan.termMonths} months</Text>
               </View>
             )}
           </View>
-          <Button title="Back to Home" onPress={() => navigation.navigate("Home")} />
+          <Button title="Back to Home" onPress={() => navigation.navigate("HomeTabs")} />
         </View>
       </ScrollView>
     );
@@ -131,6 +144,12 @@ export default function LoanApplication() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <SidebarDrawer
+        visible={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        onNavigate={handleSidebarNav}
+        onLogout={handleLogout}
+      />
       <View style={{ padding: 20 }}>
         <TouchableOpacity style={{ marginBottom: 20 }} onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color="black" />
@@ -138,7 +157,7 @@ export default function LoanApplication() {
         <Text style={styles.heading}>Loan Application</Text>
 
         <View style={styles.card}>
-          <Text style={styles.label}>Loan Amount (₦)</Text>
+          <Text style={styles.label}>Loan Amount (P)</Text>
           <Controller
             control={control}
             name="amount"
@@ -195,7 +214,7 @@ export default function LoanApplication() {
             )}
           />
 
-          <Text style={styles.label}>Monthly Income (₦)</Text>
+          <Text style={styles.label}>Monthly Income (P)</Text>
           <Controller
             control={control}
             name="monthlyIncome"
@@ -239,7 +258,7 @@ export default function LoanApplication() {
         <View style={styles.infoBox}>
           <Text style={styles.infoTitle}>Instant Approval Available</Text>
           <Text style={styles.infoText}>
-            Most applications are approved instantly. You'll know your result immediately after submission.
+            Most applications are approved instantly. You&#39;ll know your result immediately after submission.
           </Text>
         </View>
 
@@ -255,23 +274,110 @@ export default function LoanApplication() {
 }
 
 const styles = StyleSheet.create({
-  container: { flexGrow: 1, backgroundColor: "white" },
-  heading: { fontSize: 24, fontWeight: "bold", marginBottom: 16 },
-  card: { backgroundColor: "#f8fafc", borderRadius: 8, padding: 16, marginBottom: 16 },
-  label: { fontWeight: "500", marginTop: 8 },
-  input: { borderWidth: 1, borderColor: "#e5e7eb", borderRadius: 4, padding: 8, marginTop: 4, backgroundColor: "#fff" },
-  error: { color: "red", fontSize: 12, marginTop: 2 },
-  infoBox: { backgroundColor: "#e0e7ff", borderRadius: 8, padding: 12, marginBottom: 16 },
-  infoTitle: { fontWeight: "bold", marginBottom: 4, color: "#3730a3" },
-  infoText: { color: "#3730a3" },
-  resultCard: { backgroundColor: "#f8fafc", borderRadius: 8, padding: 24, alignItems: "center", marginBottom: 24 },
-  resultIcon: { width: 64, height: 64, borderRadius: 32, alignItems: "center", justifyContent: "center", marginBottom: 12 },
-  resultTitle: { fontSize: 20, fontWeight: "bold", marginBottom: 8 },
-  resultText: { color: "#4b5563", marginBottom: 8 },
-  detailsBox: { backgroundColor: "#f3f4f6", borderRadius: 8, padding: 12, marginBottom: 16, width: "100%" },
+  container: { flexGrow: 1, backgroundColor: Colors.light.background },
+  card: {
+    backgroundColor: Colors.light.background,
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOpacity: 0.07,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
+  },
+  heading: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginBottom: 18,
+    color: Colors.light.tint,
+    textAlign: 'center',
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: Colors.light.icon,
+    borderRadius: 4,
+    padding: 8,
+    marginTop: 4,
+    backgroundColor: Colors.light.background,
+    color: Colors.light.text,
+  },
+  error: {
+    color: '#d32f2f',
+    fontSize: 12,
+    marginTop: 2,
+  },
+  infoBox: {
+    backgroundColor: Colors.light.icon,
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 16,
+  },
+  infoTitle: {
+    fontWeight: 'bold',
+    marginBottom: 4,
+    color: Colors.light.text,
+  },
+  infoText: {
+    color: Colors.light.text,
+  },
+  resultCard: {
+    backgroundColor: Colors.light.background,
+    borderRadius: 8,
+    padding: 24,
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  resultIcon: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 12,
+  },
+  resultTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 8,
+    color: Colors.light.tint,
+  },
+  resultText: {
+    color: Colors.light.text,
+    marginBottom: 8,
+  },
+  detailsBox: {
+    backgroundColor: Colors.light.background,
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 16,
+    width: '100%',
+  },
+  label: {
+    fontWeight: 'bold',
+    marginTop: 12,
+    marginBottom: 4,
+    color: Colors.light.text,
+  },
 });
 
 const pickerSelectStyles = {
-  inputIOS: { borderWidth: 1, borderColor: "#e5e7eb", borderRadius: 4, padding: 8, marginTop: 4, backgroundColor: "#fff" },
-  inputAndroid: { borderWidth: 1, borderColor: "#e5e7eb", borderRadius: 4, padding: 8, marginTop: 4, backgroundColor: "#fff" },
+  inputIOS: {
+    borderWidth: 1,
+    borderColor: Colors.light.icon,
+    borderRadius: 4,
+    padding: 8,
+    marginTop: 4,
+    backgroundColor: Colors.light.background,
+    color: Colors.light.text,
+  },
+  inputAndroid: {
+    borderWidth: 1,
+    borderColor: Colors.light.icon,
+    borderRadius: 4,
+    padding: 8,
+    marginTop: 4,
+    backgroundColor: Colors.light.background,
+    color: Colors.light.text,
+  },
 };

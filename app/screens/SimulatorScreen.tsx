@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { runSimulation } from '../../modules/FinancialTwinSimulator';
+import SidebarDrawer from '../../components/ui/SidebarDrawer';
+import { Colors } from '../../constants/Colors';
+import { useOpenAIApi } from '../../hooks/useOpenAIApi';
 
 export default function SimulatorScreen() {
   const [loanAmount, setLoanAmount] = useState('');
   const [monthlyIncome, setMonthlyIncome] = useState('');
   const [avgExpenses, setAvgExpenses] = useState('');
   const [result, setResult] = useState<any>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { getOpenAIInsights } = useOpenAIApi();
 
-  const handleSimulate = () => {
+  const handleSimulate = async () => {
     const input = {
       loanAmount: parseFloat(loanAmount),
       income: parseFloat(monthlyIncome),
@@ -16,18 +20,44 @@ export default function SimulatorScreen() {
       months: 12,
       interestRate: 12,
     };
-    const simResult = runSimulation(input);
-    setResult(simResult);
+    setResult(null);
+    // Get OpenAI suggestions (NLP-based analysis)
+    if (getOpenAIInsights) {
+      const aiSuggestion = await getOpenAIInsights(input);
+      setResult({
+        overdraftRisk: undefined,
+        worstCase: undefined,
+        bestCase: undefined,
+        aiSuggestion,
+      });
+    }
+  };
+
+  const handleSidebarNav = (route: string) => {
+    setSidebarOpen(false);
+    // Use navigation logic if needed
+  };
+
+  const handleLogout = () => {
+    setSidebarOpen(false);
+    // Use navigation logic if needed
   };
 
   return (
     <View style={styles.card}>
+      <SidebarDrawer
+        visible={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        onNavigate={handleSidebarNav}
+        onLogout={handleLogout}
+      />
       <TextInput
         style={styles.input}
         placeholder="Loan Amount"
         value={loanAmount}
         onChangeText={setLoanAmount}
         keyboardType="numeric"
+        placeholderTextColor={Colors.light.icon}
       />
       <TextInput
         style={styles.input}
@@ -35,6 +65,7 @@ export default function SimulatorScreen() {
         value={monthlyIncome}
         onChangeText={setMonthlyIncome}
         keyboardType="numeric"
+        placeholderTextColor={Colors.light.icon}
       />
       <TextInput
         style={styles.input}
@@ -42,16 +73,16 @@ export default function SimulatorScreen() {
         value={avgExpenses}
         onChangeText={setAvgExpenses}
         keyboardType="numeric"
+        placeholderTextColor={Colors.light.icon}
       />
       <TouchableOpacity style={styles.button} onPress={handleSimulate}>
         <Text style={styles.buttonText}>Simulate</Text>
       </TouchableOpacity>
       {result && (
         <View style={styles.resultBox}>
-          <Text style={styles.resultText}>Default Probability: {result.overdraftRisk}%</Text>
-          <Text style={styles.resultText}>
-            Worst-case drop: {result.worstCase} … Best-case peak: {result.bestCase}
-          </Text>
+          {result.aiSuggestion && (
+            <Text style={styles.resultText}>{result.aiSuggestion}</Text>
+          )}
         </View>
       )}
     </View>
@@ -60,9 +91,9 @@ export default function SimulatorScreen() {
 
 const styles = StyleSheet.create({
   card: {
-    margin: 24,
-    padding: 24,
-    backgroundColor: '#fff',
+    margin: 16,
+    padding: 16,
+    backgroundColor: Colors.light.background,
     borderRadius: 16,
     shadowColor: '#000',
     shadowOpacity: 0.1,
@@ -73,36 +104,37 @@ const styles = StyleSheet.create({
   input: {
     width: '100%',
     borderWidth: 1,
-    borderColor: '#d0d0d0',
+    borderColor: Colors.light.icon,
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
-    backgroundColor: '#f8f8f8',
+    backgroundColor: Colors.light.background,
+    color: Colors.light.text,
     marginBottom: 16,
   },
   button: {
     width: '100%',
-    backgroundColor: '#0a7ea4',
+    backgroundColor: Colors.light.tint,
     borderRadius: 8,
     paddingVertical: 14,
     alignItems: 'center',
     marginTop: 8,
   },
   buttonText: {
-    color: '#fff',
+    color: Colors.light.background,
     fontWeight: 'bold',
     fontSize: 16,
   },
   resultBox: {
     marginTop: 24,
-    backgroundColor: '#e0e0e0',
+    backgroundColor: Colors.light.icon,
     borderRadius: 8,
     padding: 16,
-    width: '100%',
+    alignItems: 'center',
   },
   resultText: {
+    color: Colors.light.text,
     fontSize: 16,
-    color: '#0a7ea4',
     marginBottom: 4,
   },
 });

@@ -1,17 +1,35 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import SidebarDrawer from '../../components/ui/SidebarDrawer';
 import { useFraudScore } from '../../hooks/useFraudScore';
 
 export default function FraudAlertScreen() {
   const { fraudScore } = useFraudScore();
   const [score, setScore] = useState(fraudScore);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const refresh = () => {
     setScore(Math.floor(Math.random() * 100));
   };
 
+  const handleSidebarNav = (route: string) => {
+    setSidebarOpen(false);
+    // Use navigation logic if needed
+  };
+
+  const handleLogout = () => {
+    setSidebarOpen(false);
+    // Use navigation logic if needed
+  };
+
   return (
     <View style={styles.container}>
+      <SidebarDrawer
+        visible={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        onNavigate={handleSidebarNav}
+        onLogout={handleLogout}
+      />
       <Text style={styles.headline}>Fraud Score: {score}</Text>
       {score > 70 ? (
         <View style={[styles.banner, styles.redBanner]}>

@@ -2,23 +2,19 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect, useState } from 'react';
 import {
-    ActivityIndicator,
-    Dimensions,
-    SafeAreaView,
-    ScrollView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Dimensions,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
+import SidebarDrawer from '../../components/ui/SidebarDrawer';
 
 const { width } = Dimensions.get('window');
-
-const [summaryLoading, setSummaryLoading] = useState(false);
-const [historyLoading, setHistoryLoading] = useState(false);
-const [goalsLoading, setGoalsLoading] = useState(false);
-const [notificationsLoading, setNotificationsLoading] = useState(false);
 
 // Custom Progress Bar Component
 const ProgressBar = ({ value, style }: { value: number; style?: any }) => (
@@ -28,23 +24,30 @@ const ProgressBar = ({ value, style }: { value: number; style?: any }) => (
 );
 
 // Custom Badge Component
-const Badge = ({ children, variant = 'default', style }: { 
-  children: React.ReactNode; 
-  variant?: 'default' | 'destructive' | 'secondary'; 
-  style?: any 
+const Badge = ({
+  children,
+  variant = 'default',
+  style,
+}: {
+  children: React.ReactNode;
+  variant?: 'default' | 'destructive' | 'secondary';
+  style?: any;
 }) => {
-  const badgeStyle = variant === 'destructive' 
-    ? styles.badgeDestructive 
-    : variant === 'secondary'
-    ? styles.badgeSecondary
-    : styles.badgeDefault;
-  
+  const badgeStyle =
+    variant === 'destructive'
+      ? styles.badgeDestructive
+      : variant === 'secondary'
+      ? styles.badgeSecondary
+      : styles.badgeDefault;
+
   return (
     <View style={[badgeStyle, style]}>
-      <Text style={[
-        styles.badgeText, 
-        variant === 'destructive' ? styles.badgeTextLight : styles.badgeTextDark
-      ]}>
+      <Text
+        style={[
+          styles.badgeText,
+          variant === 'destructive' ? styles.badgeTextLight : styles.badgeTextDark,
+        ]}
+      >
         {children}
       </Text>
     </View>
@@ -53,9 +56,7 @@ const Badge = ({ children, variant = 'default', style }: {
 
 // Custom Card Component
 const Card = ({ children, style }: { children: React.ReactNode; style?: any }) => (
-  <View style={[styles.card, style]}>
-    {children}
-  </View>
+  <View style={[styles.card, style]}>{children}</View>
 );
 
 export default function Dashboard({ navigation }: { navigation?: any }) {
@@ -64,11 +65,11 @@ export default function Dashboard({ navigation }: { navigation?: any }) {
   const [creditHistory, setCreditHistory] = useState<any[]>([]);
   const [savingsGoals, setSavingsGoals] = useState<any[]>([]);
   const [notifications, setNotifications] = useState<any[]>([]);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Mock data - replace with actual API calls
   useEffect(() => {
     const loadData = async () => {
-      // Simulate API loading
+      // Simulate API loading delay
       setTimeout(() => {
         setFinancialSummary({
           creditScore: 720,
@@ -76,59 +77,59 @@ export default function Dashboard({ navigation }: { navigation?: any }) {
           activeLoans: 2,
           paymentHistory: {
             onTime: 15,
-            failed: 2
-          }
+            failed: 2,
+          },
         });
-        
+
         setCreditHistory([
           {
             id: 1,
-            reason: "payment_made",
+            reason: 'payment_made',
             previousScore: 700,
             newScore: 720,
-            createdAt: new Date().toISOString()
+            createdAt: new Date().toISOString(),
           },
           {
             id: 2,
-            reason: "loan_approved",
+            reason: 'loan_approved',
             previousScore: 680,
             newScore: 700,
-            createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
-          }
+            createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+          },
         ]);
-        
+
         setSavingsGoals([
           {
             id: 1,
-            goalName: "Emergency Fund",
-            currentAmount: "75000",
-            targetAmount: "100000",
+            goalName: 'Emergency Fund',
+            currentAmount: '75000',
+            targetAmount: '100000',
             isCompleted: false,
-            targetDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString()
-          }
+            targetDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(),
+          },
         ]);
-        
+
         setNotifications([
           {
             id: 1,
-            title: "Payment Due",
-            message: "Your loan payment is due in 3 days",
+            title: 'Payment Due',
+            message: 'Your loan payment is due in 3 days',
             isRead: false,
-            createdAt: new Date().toISOString()
+            createdAt: new Date().toISOString(),
           },
           {
             id: 2,
-            title: "Credit Score Updated",
-            message: "Your credit score has improved to 720",
+            title: 'Credit Score Updated',
+            message: 'Your credit score has improved to 720',
             isRead: true,
-            createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
-          }
+            createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+          },
         ]);
-        
+
         setIsLoading(false);
       }, 1000);
     };
-    
+
     loadData();
   }, []);
 
@@ -146,7 +147,21 @@ export default function Dashboard({ navigation }: { navigation?: any }) {
     }
   };
 
-  if (summaryLoading || historyLoading || goalsLoading || notificationsLoading) {
+  const handleSidebarNav = (route: string) => {
+    setSidebarOpen(false);
+    if (navigation && navigation.navigate) {
+      navigation.navigate(route.replace('/screens/', ''));
+    }
+  };
+
+  const handleLogout = () => {
+    setSidebarOpen(false);
+    if (navigation && navigation.replace) {
+      navigation.replace('Landing');
+    }
+  };
+
+  if (isLoading) {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.loadingContainer}>
@@ -159,12 +174,16 @@ export default function Dashboard({ navigation }: { navigation?: any }) {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" />
-      
+      {/* Sidebar Drawer */}
+      <SidebarDrawer
+        visible={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        onNavigate={handleSidebarNav}
+        onLogout={handleLogout}
+      />
+
       {/* Header */}
-      <LinearGradient
-        colors={['#8B5CF6', '#A855F7']}
-        style={styles.header}
-      >
+      <LinearGradient colors={['#8B5CF6', '#A855F7']} style={styles.header}>
         <View style={styles.headerContent}>
           <View style={styles.headerTop}>
             <Text style={styles.headerTitle}>Financial Dashboard</Text>
@@ -172,9 +191,7 @@ export default function Dashboard({ navigation }: { navigation?: any }) {
               <Ionicons name="notifications" size={24} color="white" />
               {unreadNotifications.length > 0 && (
                 <View style={styles.notificationBadge}>
-                  <Text style={styles.notificationBadgeText}>
-                    {unreadNotifications.length}
-                  </Text>
+                  <Text style={styles.notificationBadgeText}>{unreadNotifications.length}</Text>
                 </View>
               )}
             </View>
@@ -186,20 +203,26 @@ export default function Dashboard({ navigation }: { navigation?: any }) {
                 <Text style={styles.summaryLabel}>Credit Score</Text>
                 <Text style={styles.summaryValue}>{financialSummary.creditScore}</Text>
                 <View style={styles.summaryTrend}>
-                  <Ionicons 
-                    name={financialSummary.creditScore >= 650 ? "trending-up" : "trending-down"} 
-                    size={16} 
-                    color={financialSummary.creditScore >= 650 ? "#10B981" : "#EF4444"} 
+                  <Ionicons
+                    name={
+                      financialSummary.creditScore >= 650 ? 'trending-up' : 'trending-down'
+                    }
+                    size={16}
+                    color={financialSummary.creditScore >= 650 ? '#10B981' : '#EF4444'}
                   />
                   <Text style={styles.summaryTrendText}>
-                    {financialSummary.creditScore >= 650 ? "Good" : "Fair"}
+                    {financialSummary.creditScore >= 650 ? 'Good' : 'Fair'}
                   </Text>
                 </View>
               </View>
               <View style={styles.summaryCard}>
                 <Text style={styles.summaryLabel}>Total Paid</Text>
-                <Text style={styles.summaryValue}>₦{financialSummary.totalPaid.toLocaleString()}</Text>
-                <Text style={styles.summarySubtext}>{financialSummary.activeLoans} active loans</Text>
+                <Text style={styles.summaryValue}>
+                  P{financialSummary.totalPaid.toLocaleString()}
+                </Text>
+                <Text style={styles.summarySubtext}>
+                  {financialSummary.activeLoans} active loans
+                </Text>
               </View>
             </View>
           )}
@@ -225,15 +248,28 @@ export default function Dashboard({ navigation }: { navigation?: any }) {
               </View>
               <View style={styles.progressSection}>
                 <Text style={styles.progressTitle}>Payment Success Rate</Text>
-                <ProgressBar 
+                <ProgressBar
                   value={
-                    (financialSummary.paymentHistory.onTime / 
-                    Math.max(1, financialSummary.paymentHistory.onTime + financialSummary.paymentHistory.failed)) * 100
+                    (financialSummary.paymentHistory.onTime /
+                      Math.max(
+                        1,
+                        financialSummary.paymentHistory.onTime +
+                          financialSummary.paymentHistory.failed
+                      )) *
+                    100
                   }
                 />
                 <Text style={styles.progressText}>
-                  {Math.round((financialSummary.paymentHistory.onTime / 
-                  Math.max(1, financialSummary.paymentHistory.onTime + financialSummary.paymentHistory.failed)) * 100)}% success rate
+                  {Math.round(
+                    (financialSummary.paymentHistory.onTime /
+                      Math.max(
+                        1,
+                        financialSummary.paymentHistory.onTime +
+                          financialSummary.paymentHistory.failed
+                      )) *
+                      100
+                  )}
+                  % success rate
                 </Text>
               </View>
             </View>
@@ -252,7 +288,9 @@ export default function Dashboard({ navigation }: { navigation?: any }) {
                 <View key={entry.id} style={styles.historyItem}>
                   <View style={styles.historyLeft}>
                     <Text style={styles.historyReason}>
-                     {entry.reason.replace("_", " ").replace(/\b\w/g, (l: string) => l.toUpperCase())}
+                      {entry.reason
+                        .replace('_', ' ')
+                        .replace(/\b\w/g, (l: string) => l.toUpperCase())}
                     </Text>
                     <Text style={styles.historyDate}>
                       {new Date(entry.createdAt).toLocaleDateString()}
@@ -265,13 +303,16 @@ export default function Dashboard({ navigation }: { navigation?: any }) {
                       <Text style={styles.scoreTextNew}>{entry.newScore}</Text>
                     </View>
                     <View style={styles.scoreTrend}>
-                      <Ionicons 
-                        name={entry.newScore > entry.previousScore ? "trending-up" : "trending-down"} 
-                        size={12} 
-                        color={entry.newScore > entry.previousScore ? "#10B981" : "#EF4444"} 
+                      <Ionicons
+                        name={
+                          entry.newScore > entry.previousScore ? 'trending-up' : 'trending-down'
+                        }
+                        size={12}
+                        color={entry.newScore > entry.previousScore ? '#10B981' : '#EF4444'}
                       />
                       <Text style={styles.scoreDiff}>
-                        {entry.newScore > entry.previousScore ? "+" : ""}{entry.newScore - entry.previousScore}
+                        {entry.newScore > entry.previousScore ? '+' : ''}
+                        {entry.newScore - entry.previousScore}
                       </Text>
                     </View>
                   </View>
@@ -290,19 +331,24 @@ export default function Dashboard({ navigation }: { navigation?: any }) {
             </View>
             <View style={styles.cardContent}>
               {savingsGoals.slice(0, 3).map((goal) => {
-                const progress = (parseFloat(goal.currentAmount) / parseFloat(goal.targetAmount)) * 100;
+                const progress =
+                  (parseFloat(goal.currentAmount) / parseFloat(goal.targetAmount)) * 100;
                 return (
                   <View key={goal.id} style={styles.goalItem}>
                     <View style={styles.goalHeader}>
                       <Text style={styles.goalName}>{goal.goalName}</Text>
-                      <Badge variant={goal.isCompleted ? "default" : "secondary"}>
-                        {goal.isCompleted ? "Completed" : "In Progress"}
+                      <Badge variant={goal.isCompleted ? 'default' : 'secondary'}>
+                        {goal.isCompleted ? 'Completed' : 'In Progress'}
                       </Badge>
                     </View>
                     <ProgressBar value={Math.min(100, progress)} style={styles.goalProgress} />
                     <View style={styles.goalAmounts}>
-                      <Text style={styles.goalAmount}>₦{parseFloat(goal.currentAmount).toLocaleString()}</Text>
-                      <Text style={styles.goalAmount}>₦{parseFloat(goal.targetAmount).toLocaleString()}</Text>
+                      <Text style={styles.goalAmount}>
+                        P{parseFloat(goal.currentAmount).toLocaleString()}
+                      </Text>
+                      <Text style={styles.goalAmount}>
+                        P{parseFloat(goal.targetAmount).toLocaleString()}
+                      </Text>
                     </View>
                     {goal.targetDate && (
                       <Text style={styles.goalDate}>
@@ -330,11 +376,11 @@ export default function Dashboard({ navigation }: { navigation?: any }) {
             </View>
             <View style={styles.cardContent}>
               {notifications.slice(0, 5).map((notification) => (
-                <View 
-                  key={notification.id} 
+                <View
+                  key={notification.id}
                   style={[
                     styles.notificationItem,
-                    notification.isRead ? styles.notificationRead : styles.notificationUnread
+                    notification.isRead ? styles.notificationRead : styles.notificationUnread,
                   ]}
                 >
                   <View style={styles.notificationContent}>
@@ -344,9 +390,7 @@ export default function Dashboard({ navigation }: { navigation?: any }) {
                       {new Date(notification.createdAt).toLocaleDateString()}
                     </Text>
                   </View>
-                  {!notification.isRead && (
-                    <View style={styles.unreadDot} />
-                  )}
+                  {!notification.isRead && <View style={styles.unreadDot} />}
                 </View>
               ))}
             </View>
@@ -365,8 +409,8 @@ export default function Dashboard({ navigation }: { navigation?: any }) {
 
         <View style={styles.bottomSpacing} />
       </ScrollView>
-      
-      {/* You'll need to implement BottomNavigation component for React Native */}
+
+      {/* Bottom navigation placeholder if you implement one */}
       {/* <BottomNavigation activeTab="dashboard" /> */}
     </SafeAreaView>
   );

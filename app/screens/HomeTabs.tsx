@@ -1,8 +1,7 @@
-import { useRouter } from 'expo-router';
+import { useNavigation } from '@react-navigation/native';
 import React, { useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   Linking,
   SafeAreaView,
   ScrollView,
@@ -12,12 +11,13 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import SidebarDrawer from '../../components/ui/SidebarDrawer';
 
 // Mock data - replace with your actual data fetching logic
 const mockUser = {
   firstName: "John",
   email: "john@example.com",
-  phone: "+234 123 456 7890"
+  phone: "+26771234567"
 };
 
 const mockLoans = [
@@ -51,12 +51,13 @@ const mockPayments = [
 ];
 
 export default function Home() {
-  // Correct navigation type
-  const router = useRouter();
-  const [user, setUser] = useState(mockUser);
-  const [isLoading, setIsLoading] = useState(false);
+  const navigation = useNavigation();
+  const [user] = useState(mockUser);
+  const [isLoading] = useState(false);
   const [loans] = useState(mockLoans);
   const [payments] = useState(mockPayments);
+  // Sidebar (Drawer) state
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const activeLoan = loans.find((loan: any) => loan.status === "active");
   const recentPayments = payments.slice(0, 3);
@@ -66,16 +67,32 @@ export default function Home() {
     ? ((parseFloat(activeLoan.totalAmount) - parseFloat(activeLoan.remainingBalance)) / parseFloat(activeLoan.totalAmount)) * 100
     : 0;
 
-  // Navigation functions
-  const navigateToPayment = (loanId?: string) => {
-    Alert.alert("Navigation", `Would navigate to payment screen ${loanId ? `for loan ${loanId}` : ''}`);
+  // Navigation handlers
+  const handleMakePayment = () => {
+    navigation.navigate('SendMoneyScreen');
   };
-
+  const handleNewLoan = () => {
+    navigation.navigate('LoanApplication');
+  };
+  const handleLoanCalculator = () => {
+    navigation.navigate('SimulatorScreen');
+  };
+  const handleRecentPayments = () => {
+    navigation.navigate('SendMoneyScreen'); // adjust if you have a payments screen
+  };
   const handleUSSDCall = () => {
     const ussdCode = "*737*LOAN*PAY#";
     Linking.openURL(`tel:${ussdCode}`).catch(() =>
-      Alert.alert("Error", "Unable to open dialer")
+      alert("Unable to open dialer")
     );
+  };
+  const handleSidebarNav = (route: string) => {
+    setSidebarOpen(false);
+    router.push(route as any);
+  };
+  const handleLogout = () => {
+    setSidebarOpen(false);
+    router.replace('/screens/Landing');
   };
 
   const ProgressBar = ({ value, style }: { value: number; style?: any }) => (
@@ -104,7 +121,16 @@ export default function Home() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="white" />
+      {/* Sidebar Drawer */}
+      <SidebarDrawer
+        visible={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        onNavigate={handleSidebarNav}
+        onLogout={handleLogout}
+      />
+      {/* Main Content */}
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+        {/* Header */}
         <View style={styles.header}>
           <View style={styles.userInfo}>
             <View style={styles.avatar}>
@@ -124,9 +150,12 @@ export default function Home() {
               <Text style={styles.bellIcon}>🔔</Text>
               <View style={styles.notificationBadge} />
             </View>
-            <Text style={styles.menuIcon}>☰</Text>
+            <TouchableOpacity onPress={() => setSidebarOpen(true)}>
+              <Text style={styles.menuIcon}>☰</Text>
+            </TouchableOpacity>
           </View>
         </View>
+
         <View style={styles.content}>
           {/* Current Loan Status */}
           {activeLoan ? (
@@ -135,7 +164,7 @@ export default function Home() {
                 <View>
                   <Text style={styles.loanLabel}>Current Loan</Text>
                   <Text style={styles.loanAmount}>
-                    ₦{parseFloat(activeLoan.amount).toLocaleString()}
+                    P{parseFloat(activeLoan.amount).toLocaleString()}
                   </Text>
                 </View>
                 <Text style={styles.carIcon}>🚗</Text>
@@ -144,7 +173,7 @@ export default function Home() {
                 <View style={styles.loanDetailItem}>
                   <Text style={styles.loanDetailLabel}>Next Payment</Text>
                   <Text style={styles.loanDetailValue}>
-                    ₦{parseFloat(activeLoan.monthlyPayment).toLocaleString()}
+                    P{parseFloat(activeLoan.monthlyPayment).toLocaleString()}
                   </Text>
                 </View>
                 <View style={styles.loanDetailItem}>
@@ -167,12 +196,11 @@ export default function Home() {
               <Text style={styles.noLoanCarIcon}>🚗</Text>
               <Text style={styles.noLoanTitle}>Ready for your first loan?</Text>
               <Text style={styles.noLoanSubtitle}>
-                Get instant approval for auto loans up to ₦2,000,000
+                Get instant approval for auto loans up to P2,000,000
               </Text>
               <TouchableOpacity 
                 style={[styles.quickActionButton, styles.newLoanButton]}
-                onPress={() => router.push('/screens/LoanApplication')}
-                
+                onPress={handleNewLoan}
               >
                 <Text style={styles.plusIcon}>➕</Text>
                 <Text style={styles.quickActionText}>New Loan</Text>
@@ -186,17 +214,32 @@ export default function Home() {
             <View style={styles.quickActions}>
               <TouchableOpacity
                 style={[styles.quickActionButton, styles.paymentButton]}
-                onPress={() => navigateToPayment(activeLoan?.id)}
+                onPress={handleMakePayment}
               >
                 <Text style={styles.cardIcon}>💳</Text>
                 <Text style={styles.quickActionText}>Make Payment</Text>
               </TouchableOpacity>
               <TouchableOpacity 
                 style={[styles.quickActionButton, styles.newLoanButton]}
-                onPress={() => router.push('/screens/LoanApplication')}
+                onPress={handleNewLoan}
               >
                 <Text style={styles.plusIcon}>➕</Text>
                 <Text style={styles.quickActionText}>New Loan</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.quickActionButton, styles.calculatorButton]}
+                onPress={handleLoanCalculator}
+              >
+                <Text style={styles.cardIcon}>🧮</Text>
+                <Text style={styles.quickActionText}>Loan Calculator</Text>
+              </TouchableOpacity>
+              {/* Digital ID Button */}
+              <TouchableOpacity
+                style={[styles.quickActionButton, { backgroundColor: '#1976d2' }]}
+                onPress={() => router.push('/screens/DigitalIDScreen')}
+              >
+                <Text style={styles.cardIcon}>🆔</Text>
+                <Text style={styles.quickActionText}>My Digital ID</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -229,7 +272,7 @@ export default function Home() {
             <View style={styles.section}>
               <View style={styles.sectionHeader}>
                 <Text style={styles.sectionTitle}>Recent Payments</Text>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={handleRecentPayments}>
                   <Text style={styles.viewAllText}>View All</Text>
                 </TouchableOpacity>
               </View>
@@ -247,7 +290,8 @@ export default function Home() {
                         {payment.paymentMethod.replace("_", " ").replace(/\b\w/g, (l: string) => l.toUpperCase())}
                       </Text>
                       <Text style={styles.paymentDate}>
-                        {new Date(payment.createdAt).toLocaleDateString()}
+                        {new Date(payment.createdAt).toLocaleDateString()
+                        }
                       </Text>
                     </View>
                   </View>
@@ -256,7 +300,7 @@ export default function Home() {
                       styles.paymentAmount,
                       payment.status === "completed" ? styles.paymentAmountSuccess : styles.paymentAmountDefault
                     ]}>
-                      ₦{parseFloat(payment.amount).toLocaleString()}
+                      P{parseFloat(payment.amount).toLocaleString()}
                     </Text>
                     <Badge variant={payment.status === "completed" ? "default" : "secondary"}>
                       {payment.status}
@@ -266,17 +310,6 @@ export default function Home() {
               ))}
             </View>
           )}
-
-          {/* Loan Calculator - Mock component */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Loan Calculator</Text>
-            <View style={styles.calculatorCard}>
-              <Text style={styles.calculatorText}>Calculate your loan payments</Text>
-              <TouchableOpacity style={styles.calculatorButton}>
-                <Text style={styles.calculatorButtonText}>Open Calculator</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
 
           {/* USSD Demo */}
           <View style={styles.ussdCard}>
@@ -291,13 +324,7 @@ export default function Home() {
           </View>
         </View>
       </ScrollView>
-      {/* Bottom Navigation - Mock component */}
-      <View style={styles.bottomNav}>
-        <Text style={styles.bottomNavText}>🏠 Home</Text>
-        <Text style={styles.bottomNavText}>📊 Loans</Text>
-        <Text style={styles.bottomNavText}>💳 Payments</Text>
-        <Text style={styles.bottomNavText}>👤 Profile</Text>
-      </View>
+      {/* Removed mock bottom navigation */}
     </SafeAreaView>
   );
 }
@@ -485,6 +512,9 @@ const styles = StyleSheet.create({
   },
   newLoanButton: {
     backgroundColor: '#007AFF',
+  },
+  calculatorButton: {
+    backgroundColor: '#F59E0B',
   },
   quickActionText: {
     color: 'white',
@@ -676,12 +706,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#6B7280',
   },
-  calculatorButton: {
-    backgroundColor: '#007AFF',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 8,
-  },
   calculatorButtonText: {
     color: 'white',
     fontSize: 14,
@@ -704,5 +728,68 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#6B7280',
     textAlign: 'center',
-  }
+  },
+  // Sidebar (Drawer) styles
+  sidebarOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    zIndex: 100,
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+  },
+  sidebarDrawer: {
+    width: 270,
+    maxWidth: '80%',
+    height: '100%',
+    backgroundColor: '#fff',
+    paddingTop: 32,
+    paddingHorizontal: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 2, height: 0 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  sidebarCloseBtn: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    zIndex: 10,
+  },
+  sidebarCloseIcon: {
+    fontSize: 28,
+    color: '#6B7280',
+  },
+  sidebarTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    marginBottom: 24,
+    color: '#007AFF',
+  },
+  sidebarLink: {
+    paddingVertical: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F3F4F6',
+  },
+  sidebarLinkText: {
+    fontSize: 16,
+    color: '#1F2937',
+  },
+  sidebarDivider: {
+    height: 1,
+    backgroundColor: '#E5E7EB',
+    marginVertical: 18,
+  },
+  sidebarLogoutBtn: {
+    paddingVertical: 14,
+  },
+  sidebarLogoutText: {
+    fontSize: 16,
+    color: '#EF4444',
+    fontWeight: '600',
+  },
 });

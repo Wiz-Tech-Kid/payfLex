@@ -1,29 +1,23 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import {
-    Dimensions,
-    SafeAreaView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Dimensions,
+  SafeAreaView,
+  StatusBar,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
 
-export default function Landing({ }) {
-  const handleLogin = () => {
-    // Navigate to login screen or handle authentication
-    // navigation.navigate('Login');
-    console.log('Navigate to login');
-  };
+export default function Landing() {
+  const navigation = useNavigation();
 
-  const handleExistingAccount = () => {
-    // Navigate to login screen
-    // navigation.navigate('Login');
-    console.log('Navigate to existing account login');
+  const handleLogin = () => {
+    navigation.navigate('Login');
   };
 
   return (
@@ -95,10 +89,6 @@ export default function Landing({ }) {
               <TouchableOpacity style={styles.primaryButton} onPress={handleLogin}>
                 <Text style={styles.primaryButtonText}>Get Started</Text>
               </TouchableOpacity>
-              
-              <TouchableOpacity style={styles.secondaryButton} onPress={handleExistingAccount}>
-                <Text style={styles.secondaryButtonText}>I Have an Account</Text>
-              </TouchableOpacity>
             </View>
           </View>
         </View>
@@ -107,7 +97,33 @@ export default function Landing({ }) {
   );
 }
 
-const styles = StyleSheet.create({
+import { StyleSheet, TextStyle, ViewStyle } from 'react-native';
+
+const styles = StyleSheet.create<{
+  container: ViewStyle;
+  gradient: ViewStyle;
+  content: ViewStyle;
+  heroSection: ViewStyle;
+  heroCard: ViewStyle;
+  heroSubtext: TextStyle;
+  bottomSection: ViewStyle;
+  appInfo: ViewStyle;
+  title: TextStyle;
+  subtitle: TextStyle;
+  features: ViewStyle;
+  featureItem: ViewStyle;
+  featureText: TextStyle;
+  paymentCard: ViewStyle;
+  paymentTitle: TextStyle;
+  paymentGrid: ViewStyle;
+  paymentMethod: ViewStyle;
+  paymentLabel: TextStyle;
+  buttonContainer: ViewStyle;
+  primaryButton: ViewStyle;
+  primaryButtonText: TextStyle;
+  secondaryButton: ViewStyle;
+  secondaryButtonText: TextStyle;
+}>({
   container: {
     flex: 1,
   },
