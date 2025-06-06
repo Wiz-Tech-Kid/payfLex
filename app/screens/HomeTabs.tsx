@@ -56,7 +56,6 @@ export default function Home() {
   const [isLoading] = useState(false);
   const [loans] = useState(mockLoans);
   const [payments] = useState(mockPayments);
-  // Sidebar (Drawer) state
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const activeLoan = loans.find((loan: any) => loan.status === "active");
@@ -78,7 +77,7 @@ export default function Home() {
     navigation.navigate('SimulatorScreen');
   };
   const handleRecentPayments = () => {
-    navigation.navigate('SendMoneyScreen'); // adjust if you have a payments screen
+    navigation.navigate('SendMoneyScreen'); // adjust if you have a dedicated payments screen
   };
   const handleUSSDCall = () => {
     const ussdCode = "*737*LOAN*PAY#";
@@ -88,11 +87,11 @@ export default function Home() {
   };
   const handleSidebarNav = (route: string) => {
     setSidebarOpen(false);
-    router.push(route as any);
+    navigation.navigate(route as never);
   };
   const handleLogout = () => {
     setSidebarOpen(false);
-    router.replace('/screens/Landing');
+    navigation.replace('Landing');
   };
 
   const ProgressBar = ({ value, style }: { value: number; style?: any }) => (
@@ -233,10 +232,9 @@ export default function Home() {
                 <Text style={styles.cardIcon}>🧮</Text>
                 <Text style={styles.quickActionText}>Loan Calculator</Text>
               </TouchableOpacity>
-              {/* Digital ID Button */}
               <TouchableOpacity
                 style={[styles.quickActionButton, { backgroundColor: '#1976d2' }]}
-                onPress={() => router.push('/screens/DigitalIDScreen')}
+                onPress={() => navigation.navigate('DigitalIDScreen')}
               >
                 <Text style={styles.cardIcon}>🆔</Text>
                 <Text style={styles.quickActionText}>My Digital ID</Text>
@@ -287,11 +285,12 @@ export default function Home() {
                     </View>
                     <View>
                       <Text style={styles.paymentMethodText}>
-                        {payment.paymentMethod.replace("_", " ").replace(/\b\w/g, (l: string) => l.toUpperCase())}
+                        {payment.paymentMethod
+                          .replace("_", " ")
+                          .replace(/\b\w/g, (l: string) => l.toUpperCase())}
                       </Text>
                       <Text style={styles.paymentDate}>
-                        {new Date(payment.createdAt).toLocaleDateString()
-                        }
+                        {new Date(payment.createdAt).toLocaleDateString()}
                       </Text>
                     </View>
                   </View>
@@ -324,21 +323,22 @@ export default function Home() {
           </View>
         </View>
       </ScrollView>
-<<<<<<< HEAD
-      {/* Removed mock bottom navigation */}
-=======
+
       {/* Bottom Navigation - Mock component */}
       <View style={styles.bottomNav}>
-        <Text style={styles.bottomNavText}>🏠 Home</Text>
-         <TouchableOpacity 
-                onPress={() => router.push('/screens/LoanApplication')}
-              >
-                <Text style={styles.bottomNavText}>📊 Loans</Text>
-              </TouchableOpacity>
-        <Text style={styles.bottomNavText}>💳 Payments</Text>
-        <Text style={styles.bottomNavText}>👤 Profile</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+          <Text style={styles.bottomNavText}>🏠 Home</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('LoanApplication')}>
+          <Text style={styles.bottomNavText}>📊 Loans</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('SendMoneyScreen')}>
+          <Text style={styles.bottomNavText}>💳 Payments</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+          <Text style={styles.bottomNavText}>👤 Profile</Text>
+        </TouchableOpacity>
       </View>
->>>>>>> 60740f333462f055e0448f6983faf0ec73b30039
     </SafeAreaView>
   );
 }
@@ -467,7 +467,8 @@ const styles = StyleSheet.create({
     padding: 24,
     alignItems: 'center',
   },
-  noLoanIcon: {
+  noLoanCarIcon: {
+    fontSize: 64,
     marginBottom: 16,
   },
   noLoanTitle: {
@@ -482,15 +483,26 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 16,
   },
-  applyButton: {
-    backgroundColor: 'white',
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 8,
+  quickActionButton: {
+    flex: 1,
+    paddingVertical: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    gap: 8,
   },
-  applyButtonText: {
-    color: '#8B5CF6',
-    fontWeight: '600',
+  paymentButton: {
+    backgroundColor: '#10B981',
+  },
+  newLoanButton: {
+    backgroundColor: '#007AFF',
+  },
+  calculatorButton: {
+    backgroundColor: '#F59E0B',
+  },
+  quickActionText: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: '500',
   },
   section: {
     gap: 12,
@@ -513,27 +525,6 @@ const styles = StyleSheet.create({
   quickActions: {
     flexDirection: 'row',
     gap: 12,
-  },
-  quickActionButton: {
-    flex: 1,
-    paddingVertical: 16,
-    borderRadius: 12,
-    alignItems: 'center',
-    gap: 8,
-  },
-  paymentButton: {
-    backgroundColor: '#10B981',
-  },
-  newLoanButton: {
-    backgroundColor: '#007AFF',
-  },
-  calculatorButton: {
-    backgroundColor: '#F59E0B',
-  },
-  quickActionText: {
-    color: 'white',
-    fontSize: 14,
-    fontWeight: '500',
   },
   paymentMethods: {
     flexDirection: 'row',
@@ -670,7 +661,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
-  // Icon styles
   bellIcon: {
     fontSize: 20,
     color: '#6B7280',
@@ -708,24 +698,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: '#8B5CF6',
   },
-  // Calculator styles
-  calculatorCard: {
-    backgroundColor: '#F3F4F6',
-    borderRadius: 12,
-    padding: 16,
-    alignItems: 'center',
-    gap: 12,
-  },
-  calculatorText: {
-    fontSize: 14,
-    color: '#6B7280',
-  },
-  calculatorButtonText: {
-    color: 'white',
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  // Bottom navigation styles
   bottomNav: {
     position: 'absolute',
     bottom: 0,
@@ -743,7 +715,6 @@ const styles = StyleSheet.create({
     color: '#6B7280',
     textAlign: 'center',
   },
-  // Sidebar (Drawer) styles
   sidebarOverlay: {
     position: 'absolute',
     top: 0,

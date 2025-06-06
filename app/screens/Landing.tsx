@@ -89,6 +89,13 @@ export default function Landing() {
               <TouchableOpacity style={styles.primaryButton} onPress={handleLogin}>
                 <Text style={styles.primaryButtonText}>Get Started</Text>
               </TouchableOpacity>
+              {/* Create Account Button */}
+              <TouchableOpacity
+                style={styles.secondaryButton}
+                onPress={handleLogin}
+              >
+                <Text style={styles.secondaryButtonText}>Create Account</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </View>
