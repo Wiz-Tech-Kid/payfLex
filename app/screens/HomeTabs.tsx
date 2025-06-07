@@ -198,52 +198,72 @@ export default function Home() {
               <Text style={styles.noLoanSubtitle}>
                 Get instant approval for auto loans up to P2,000,000
               </Text>
-              <TouchableOpacity 
-                style={[styles.quickActionButton, styles.newLoanButton]}
-                onPress={handleNewLoan}
-              >
-                <Text style={styles.plusIcon}>➕</Text>
-                <Text style={styles.quickActionText}>New Loan</Text>
-              </TouchableOpacity>
+            <TouchableOpacity 
+  style={[styles.quickActionCard, styles.newLoanCard]} // Changed from quickActionButton and newLoanButton
+  onPress={handleNewLoan}
+>
+  <View style={styles.quickActionIconContainer}>
+    <Text style={styles.quickActionIcon}>➕</Text>
+  </View>
+  <Text style={styles.quickActionTitle}>New Loan</Text> {/* Changed from quickActionText */}
+</TouchableOpacity>
+
             </View>
           )}
 
           {/* Quick Actions */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Quick Actions</Text>
-            <View style={styles.quickActions}>
-              <TouchableOpacity
-                style={[styles.quickActionButton, styles.paymentButton]}
-                onPress={handleMakePayment}
-              >
-                <Text style={styles.cardIcon}>💳</Text>
-                <Text style={styles.quickActionText}>Make Payment</Text>
-              </TouchableOpacity>
-              <TouchableOpacity 
-                style={[styles.quickActionButton, styles.newLoanButton]}
-                onPress={handleNewLoan}
-              >
-                <Text style={styles.plusIcon}>➕</Text>
-                <Text style={styles.quickActionText}>New Loan</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.quickActionButton, styles.calculatorButton]}
-                onPress={handleLoanCalculator}
-              >
-                <Text style={styles.cardIcon}>🧮</Text>
-                <Text style={styles.quickActionText}>Loan Calculator</Text>
-              </TouchableOpacity>
-              {/* Digital ID Button */}
-              <TouchableOpacity
-                style={[styles.quickActionButton, { backgroundColor: '#1976d2' }]}
-                onPress={() => router.push('/screens/DigitalIDScreen')}
-              >
-                <Text style={styles.cardIcon}>🆔</Text>
-                <Text style={styles.quickActionText}>My Digital ID</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
+<View style={styles.section}>
+  <Text style={styles.sectionTitle}>Quick Actions</Text>
+  <View style={styles.quickActionsGrid}>
+    <TouchableOpacity
+      style={[styles.quickActionCard, styles.paymentCard]}
+      onPress={handleMakePayment}
+      activeOpacity={0.8}
+    >
+      <View style={styles.quickActionIconContainer}>
+        <Text style={styles.quickActionIcon}>💳</Text>
+      </View>
+      <Text style={styles.quickActionTitle}>Make Payment</Text>
+      <Text style={styles.quickActionSubtitle}>Pay your loan instantly</Text>
+    </TouchableOpacity>
 
+    <TouchableOpacity
+      style={[styles.quickActionCard, styles.newLoanCard]}
+      onPress={handleNewLoan}
+      activeOpacity={0.8}
+    >
+      <View style={styles.quickActionIconContainer}>
+        <Text style={styles.quickActionIcon}>🚗</Text>
+      </View>
+      <Text style={styles.quickActionTitle}>New Loan</Text>
+      <Text style={styles.quickActionSubtitle}>Apply for auto financing</Text>
+    </TouchableOpacity>
+
+    <TouchableOpacity
+      style={[styles.quickActionCard, styles.calculatorCard]}
+      onPress={handleLoanCalculator}
+      activeOpacity={0.8}
+    >
+      <View style={styles.quickActionIconContainer}>
+        <Text style={styles.quickActionIcon}>🧮</Text>
+      </View>
+      <Text style={styles.quickActionTitle}>Calculator</Text>
+      <Text style={styles.quickActionSubtitle}>Estimate your payments</Text>
+    </TouchableOpacity>
+
+    <TouchableOpacity
+      style={[styles.quickActionCard, styles.digitalIdCard]}
+      onPress={() => router.push('/screens/DigitalIDScreen')}
+      activeOpacity={0.8}
+    >
+      <View style={styles.quickActionIconContainer}>
+        <Text style={styles.quickActionIcon}>🆔</Text>
+      </View>
+      <Text style={styles.quickActionTitle}>Digital ID</Text>
+      <Text style={styles.quickActionSubtitle}>View your profile</Text>
+    </TouchableOpacity>
+  </View>
+</View>
           {/* Payment Methods */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Payment Options</Text>
@@ -496,31 +516,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
   },
-  quickActions: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  quickActionButton: {
-    flex: 1,
-    paddingVertical: 16,
-    borderRadius: 12,
-    alignItems: 'center',
-    gap: 8,
-  },
-  paymentButton: {
-    backgroundColor: '#10B981',
-  },
-  newLoanButton: {
-    backgroundColor: '#007AFF',
-  },
-  calculatorButton: {
-    backgroundColor: '#F59E0B',
-  },
-  quickActionText: {
-    color: 'white',
-    fontSize: 14,
-    fontWeight: '500',
-  },
+ 
   paymentMethods: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -694,14 +690,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: '#8B5CF6',
   },
-  // Calculator styles
-  calculatorCard: {
-    backgroundColor: '#F3F4F6',
-    borderRadius: 12,
-    padding: 16,
-    alignItems: 'center',
-    gap: 12,
-  },
+ 
   calculatorText: {
     fontSize: 14,
     color: '#6B7280',
@@ -791,5 +780,68 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#EF4444',
     fontWeight: '600',
+  },
+  quickActionsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+  },
+  quickActionCard: {
+    width: '48%', // Two cards per row with gap
+    backgroundColor: 'white',
+    borderRadius: 16,
+    padding: 20,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+    borderWidth: 1,
+    borderColor: '#F3F4F6',
+  },
+  quickActionIconContainer: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  quickActionIcon: {
+    fontSize: 28,
+  },
+  quickActionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: 'white',
+    marginBottom: 4,
+    textAlign: 'center',
+  },
+  quickActionSubtitle: {
+    fontSize: 12,
+    color: 'rgba(255, 255, 255, 0.8)',
+    textAlign: 'center',
+    lineHeight: 16,
+  },
+  paymentCard: {
+    backgroundColor: '#10B981',
+    borderColor: '#059669',
+  },
+  newLoanCard: {
+    backgroundColor: '#007AFF',
+    borderColor: '#0056CC',
+  },
+  calculatorCard: {
+    backgroundColor: '#F59E0B',
+    borderColor: '#D97706',
+  },
+  digitalIdCard: {
+    backgroundColor: '#8B5CF6',
+    borderColor: '#7C3AED',
   },
 });

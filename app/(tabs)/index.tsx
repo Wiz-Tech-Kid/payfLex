@@ -1,7 +1,7 @@
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { loginUser } from '../../services/authService';
+//import { loginUser } from '../../services/authService';
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -15,7 +15,7 @@ export default function LoginScreen() {
     setError('');
     try {
       // loginUser expects { identifier, password }
-      await loginUser({ identifier: username.trim(), password });
+      //await loginUser({ identifier: username.trim(), password });
       router.replace('./screens/HomeTabs');
     } catch (e: any) {
       setError(e?.message || 'Login failed. Please check your credentials.');
