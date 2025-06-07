@@ -133,7 +133,7 @@ export default function DigitalIDScreen() {
         <Divider />
         <LabelValue
           label="Phone Number"
-          value={user.phone_number || user.phone_number || 'N/A'}
+          value={user.phone_number || 'N/A'}
         />
         <Divider />
         <LabelValue label="Omang ID" value={user.omangID} />

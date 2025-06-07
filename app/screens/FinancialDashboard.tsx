@@ -181,7 +181,6 @@ export default function Dashboard({ navigation }: { navigation?: any }) {
         onNavigate={handleSidebarNav}
         onLogout={handleLogout}
       />
-
       {/* Header */}
       <LinearGradient colors={['#8B5CF6', '#A855F7']} style={styles.header}>
         <View style={styles.headerContent}>
@@ -228,7 +227,6 @@ export default function Dashboard({ navigation }: { navigation?: any }) {
           )}
         </View>
       </LinearGradient>
-
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Payment Performance */}
         {financialSummary && (
@@ -409,9 +407,6 @@ export default function Dashboard({ navigation }: { navigation?: any }) {
 
         <View style={styles.bottomSpacing} />
       </ScrollView>
-
-      {/* Bottom navigation placeholder if you implement one */}
-      {/* <BottomNavigation activeTab="dashboard" /> */}
     </SafeAreaView>
   );
 }
