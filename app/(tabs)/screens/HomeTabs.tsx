@@ -271,7 +271,11 @@ export default function Home() {
 
     <TouchableOpacity
       style={[styles.quickActionCard, styles.digitalIdCard]}
+<<<<<<< HEAD:app/(tabs)/screens/HomeTabs.tsx
       onPress={() => router.push('/(tabs)/screens/DigitalIDScreen')}
+=======
+      onPress={() => router.push('/screens/DigitalIDScreen')}
+>>>>>>> fab05bb5abfce8e2193d4e0c946293557e275116:app/screens/HomeTabs.tsx
       activeOpacity={0.8}
     >
       <View style={styles.quickActionIconContainer}>
