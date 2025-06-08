@@ -2,15 +2,17 @@ import { useRouter } from 'expo-router';
 import * as React from 'react';
 import { useState } from "react";
 import {
-  ActivityIndicator,
-  Linking,
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Image,
+    Linking,
+    Platform,
+    SafeAreaView,
+    ScrollView,
+    StatusBar,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import SidebarDrawer from '../../../components/ui/SidebarDrawer';
 
@@ -50,6 +52,9 @@ const mockPayments = [
     createdAt: "2025-05-01T10:00:00Z"
   }
 ];
+
+// Add import for walletp.png
+const walletp = require('../../../assets/images/walletp.png');
 
 export default function Home() {
   const router = useRouter();
@@ -153,19 +158,27 @@ export default function Home() {
       >
         {/* Header */}
         <View style={styles.header}>
-          <View style={styles.userInfo}>
-            <View style={styles.avatar}>
-              <Text style={styles.avatarText}>
-                {user.firstName?.charAt(0) || user.email?.charAt(0) || "U"}
-              </Text>
+          {Platform.OS === 'web' ? (
+            <Image
+              source={walletp}
+              style={{ width: 48, height: 48, marginRight: 16, borderRadius: 12 }}
+              alt="PayFlex Wallet"
+            />
+          ) : (
+            <View style={styles.userInfo}>
+              <View style={styles.avatar}>
+                <Text style={styles.avatarText}>
+                  {user.firstName?.charAt(0) || user.email?.charAt(0) || "U"}
+                </Text>
+              </View>
+              <View>
+                <Text style={styles.userName}>
+                  {user.firstName || user.email?.split("@")[0] || "User"}
+                </Text>
+                <Text style={styles.userContact}>{user.phone || user.email}</Text>
+              </View>
             </View>
-            <View>
-              <Text style={styles.userName}>
-                {user.firstName || user.email?.split("@")[0] || "User"}
-              </Text>
-              <Text style={styles.userContact}>{user.phone || user.email}</Text>
-            </View>
-          </View>
+          )}
           <View style={styles.headerIcons}>
             <View style={styles.notificationContainer}>
               <Text style={styles.bellIcon}>🔔</Text>

@@ -1,9 +1,9 @@
-import { Ionicons } from '@expo/vector-icons';
 import * as React from 'react';
 import { useState } from 'react';
 import {
   ActivityIndicator,
   Dimensions,
+  Image,
   KeyboardAvoidingView,
   Platform,
   SafeAreaView,
@@ -16,13 +16,14 @@ import {
   View,
 } from 'react-native';
 
+
 const { width } = Dimensions.get('window');
 
 
 const providers = [
-  { name: 'MyZaka', prefix: '71', color: '#0ea5e9', code: '*151#' },
-  { name: 'Orange Money', prefix: '72', color: '#fb923c', code: '*145#' },
-  { name: 'Smega', prefix: '73', color: '#f43f5e', code: '*120#' },
+  { name: 'MyZaka', prefix: '71', color: '#0ea5e9', code: '*151#', logo: require('../../../assets/images/download.png') },
+  { name: 'Orange Money', prefix: '72', color: '#fb923c', code: '*145#', logo: require('../../../assets/images/download (1).png') },
+  { name: 'Smega', prefix: '73', color: '#f43f5e', code: '*120#', logo: require('../../../assets/images/download2.png') }, // If this fails, convert to .png or .jpg and update here
 ];
 
 export default function MobileWalletScreen() {
@@ -114,7 +115,7 @@ export default function MobileWalletScreen() {
                   ]}
                   onPress={() => setSelectedProvider(prov)}
                 >
-                  <Ionicons name="logo-bitcoin" size={32} color="white" />
+                  <Image source={prov.logo} style={{ width: 40, height: 40, borderRadius: 8, marginBottom: 8 }} resizeMode="contain" />
                   <Text style={styles.providerLabel}>{prov.name}</Text>
                 </TouchableOpacity>
               ))}
