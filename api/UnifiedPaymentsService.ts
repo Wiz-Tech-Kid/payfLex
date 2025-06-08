@@ -5,6 +5,7 @@
  * Exposes:
  * - sendPayment: POST /transactions/send
  */
+import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
 import { checkFraud } from './FraudService';
 import { recordEventAPI } from './LedgerServiceAPI';

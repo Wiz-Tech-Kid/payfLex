@@ -6,6 +6,7 @@
  */
 
 import axios from 'axios';
+import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
 
 const FRAUDLABSPRO_API_KEY = process.env.FRAUDLABSPRO_API_KEY!;

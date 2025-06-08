@@ -1,6 +1,7 @@
 // utils/didStorage.ts
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as FileSystem from 'expo-file-system';
+import 'react-native-get-random-values';
 
 const DID_REGISTRY_PATH = FileSystem.documentDirectory + 'did_registry.json';
 

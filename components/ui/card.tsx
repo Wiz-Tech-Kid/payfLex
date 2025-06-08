@@ -1,5 +1,5 @@
 // src/components/ui/card.tsx
-import React from 'react';
+import * as React from 'react';
 import { StyleSheet, View, ViewStyle } from 'react-native';
 
 type CardProps = {

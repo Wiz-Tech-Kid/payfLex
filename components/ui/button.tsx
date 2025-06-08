@@ -1,5 +1,5 @@
 // src/components/ui/button.tsx
-import React from 'react';
+import * as React from 'react';
 import { Pressable, Text, ViewStyle } from 'react-native';
 
 type ButtonProps = {

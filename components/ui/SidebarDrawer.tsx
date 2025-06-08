@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface SidebarDrawerProps {
@@ -17,22 +17,19 @@ export default function SidebarDrawer({ visible, onClose, onNavigate, onLogout }
           <Text style={styles.closeIcon}>×</Text>
         </TouchableOpacity>
         <Text style={styles.title}>Menu</Text>
-        <TouchableOpacity style={styles.link} onPress={() => onNavigate('/screens/HomeTabs')}>
+        <TouchableOpacity style={styles.link} onPress={() => onNavigate('HomeTabs')}>
           <Text style={styles.linkText}>🏠 Home</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.link} onPress={() => onNavigate('/screens/FinancialDashboard')}>
+        <TouchableOpacity style={styles.link} onPress={() => onNavigate('FinancialDashboard')}>
           <Text style={styles.linkText}>📊 Financial Dashboard</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.link} onPress={() => onNavigate('/screens/FraudAlertScreen')}>
+        <TouchableOpacity style={styles.link} onPress={() => onNavigate('FraudAlertScreen')}>
           <Text style={styles.linkText}>🚨 Fraud Alert</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.link} onPress={() => onNavigate('/screens/SimulatorScreen')}>
-          <Text style={styles.linkText}>🧮 Simulator</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.link} onPress={() => onNavigate('/screens/SendMoneyScreen')}>
+        <TouchableOpacity style={styles.link} onPress={() => onNavigate('SendMoneyScreen')}>
           <Text style={styles.linkText}>💳 Make Payment</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.link} onPress={() => onNavigate('/screens/DigitalIDScreen')}>
+        <TouchableOpacity style={styles.link} onPress={() => onNavigate('DigitalIDScreen')}>
           <Text style={styles.linkText}>🆔 Digital ID / Profile</Text>
         </TouchableOpacity>
         <View style={styles.divider} />

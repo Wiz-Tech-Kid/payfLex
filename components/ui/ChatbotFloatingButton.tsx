@@ -1,10 +1,10 @@
 import { Ionicons } from '@expo/vector-icons';
-import React, { useState } from 'react';
+import * as React from 'react';
 import { Modal, Platform, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import CompanionChatScreen from '../../app/screens/CompanionChatScreen';
+import CompanionChatScreen from '../../app/(tabs)/screens/CompanionChatScreen';
 
 export default function ChatbotFloatingButton() {
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = React.useState(false);
 
   return (
     <>
