@@ -1,13 +1,11 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Asset } from 'expo-asset';
+import * as FileSystem from 'expo-file-system';
 
-/**
- * Local user profile linked to a Supabase user.
- * The supabaseId field links this JSON record to the Supabase user.
- */
-export interface LocalUserProfile {
-  supabaseId: string;
-  email: string;
+const DID_REGISTRY_PATH = FileSystem.documentDirectory + 'did_registry.json';
+
+export interface DIDRegistryUser {
   fullName: string;
+  email: string;
   phone: string;
   omangId: string;
   gender: string;
@@ -15,57 +13,44 @@ export interface LocalUserProfile {
   createdAt: string;
 }
 
-/**
- * Save or update a user profile in AsyncStorage under "user_profiles".
- * If a profile with the same supabaseId exists, it is replaced.
- * @param profile LocalUserProfile to save
- */
-export async function saveUserProfile(profile: LocalUserProfile): Promise<void> {
+export async function getUserFromRegistryByDID(did: string): Promise<DIDRegistryUser | null> {
   try {
-    const raw = await AsyncStorage.getItem('user_profiles');
-    let arr: LocalUserProfile[] = [];
-    if (raw) {
-      arr = JSON.parse(raw);
-    }
-    const idx = arr.findIndex((p) => p.supabaseId === profile.supabaseId);
-    if (idx !== -1) {
-      arr[idx] = profile;
-    } else {
-      arr.push(profile);
-    }
-    await AsyncStorage.setItem('user_profiles', JSON.stringify(arr));
-  } catch (err) {
-    console.error('Failed to save user profile:', err);
-    throw err;
-  }
-}
-
-/**
- * Get a user profile by Supabase user ID.
- * Returns the profile or null if not found.
- */
-export async function getUserProfileBySupabaseId(supabaseId: string): Promise<LocalUserProfile | null> {
-  try {
-    const raw = await AsyncStorage.getItem('user_profiles');
-    if (!raw) return null;
-    const arr: LocalUserProfile[] = JSON.parse(raw);
-    return arr.find((p) => p.supabaseId === supabaseId) || null;
-  } catch (err) {
-    console.warn('Failed to get user profile:', err);
+    const content = await FileSystem.readAsStringAsync(DID_REGISTRY_PATH);
+    const users: DIDRegistryUser[] = JSON.parse(content);
+    return users.find(u => u.did === did) || null;
+  } catch {
     return null;
   }
 }
 
-/**
- * Get all local user profiles (for debugging only).
- * This is a temporary local store until Supabase full-profile integration is done.
- */
-export async function getAllProfiles(): Promise<LocalUserProfile[]> {
+export async function getUserFromRegistryByEmail(email: string): Promise<DIDRegistryUser | null> {
   try {
-    const raw = await AsyncStorage.getItem('user_profiles');
-    if (!raw) return [];
-    return JSON.parse(raw);
+    const content = await FileSystem.readAsStringAsync(DID_REGISTRY_PATH);
+    const users: DIDRegistryUser[] = JSON.parse(content);
+    return users.find(u => u.email === email) || null;
   } catch {
-    return [];
+    return null;
+  }
+}
+
+export async function getUserFromRegistryByPhone(phone: string): Promise<DIDRegistryUser | null> {
+  try {
+    const content = await FileSystem.readAsStringAsync(DID_REGISTRY_PATH);
+    const users: DIDRegistryUser[] = JSON.parse(content);
+    return users.find(u => u.phone === phone) || null;
+  } catch {
+    return null;
+  }
+}
+
+export async function ensureDidRegistryFileExists() {
+  const fileInfo = await FileSystem.getInfoAsync(DID_REGISTRY_PATH);
+  if (!fileInfo.exists) {
+    const asset = Asset.fromModule(require('../did_registry.json'));
+    await asset.downloadAsync();
+    await FileSystem.copyAsync({
+      from: asset.localUri!,
+      to: DID_REGISTRY_PATH,
+    });
   }
 }

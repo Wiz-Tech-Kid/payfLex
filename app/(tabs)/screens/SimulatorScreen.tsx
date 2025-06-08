@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   Modal,
   Platform,
+  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
@@ -113,137 +114,144 @@ export default function CalculatorScreen() {
     setCsvLoading(false);
   };
 
-  // Responsive width
+  
   const cardWidth = width > 500 ? 420 : '90%';
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1, backgroundColor: isDark ? '#18181b' : '#f8fafc' }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
-      <ScrollView contentContainerStyle={{ alignItems: 'center', paddingVertical: 24 }}>
-        <Text style={[styles.title, { color: isDark ? '#fff' : '#1e293b' }]}>Loan Calculator</Text>
-        {/* Loan Amount */}
-        <View
-          style={[
-            styles.inputCard,
-            { width: cardWidth, backgroundColor: isDark ? '#23232a' : '#fff', borderColor: focused === 'amount' ? '#7c3aed' : '#e5e7eb' },
-            isDark && { shadowColor: '#000' },
-          ]}
+    <SafeAreaView style={{ flex: 1, backgroundColor: isDark ? '#18181b' : '#f8fafc' }}>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 24}
+      >
+        <ScrollView
+          contentContainerStyle={{ alignItems: 'center', paddingVertical: 24, flexGrow: 1, justifyContent: 'center' }}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
         >
-          <Ionicons name="cash-outline" size={28} color="#7c3aed" style={styles.iconLeft} />
-          <View style={{ flex: 1 }}>
-            <Text style={[styles.label, { color: isDark ? '#a5b4fc' : '#7c3aed' }]}>Loan Amount</Text>
-            <TextInput
-              style={[styles.input, { color: isDark ? '#fff' : '#1e293b' }]}
-              keyboardType="numeric"
-              placeholder="P 100,000"
-              value={loanAmount}
-              onFocus={() => setFocused('amount')}
-              onBlur={() => setFocused(null)}
-              onChangeText={setLoanAmount}
-              placeholderTextColor={isDark ? '#a5b4fc' : '#7c3aed'}
+          <Text style={[styles.title, { color: isDark ? '#fff' : '#1e293b' }]}>Loan Calculator</Text>
+          {/* Loan Amount */}
+          <View
+            style={[
+              styles.inputCard,
+              { width: cardWidth, backgroundColor: isDark ? '#23232a' : '#fff', borderColor: focused === 'amount' ? '#7c3aed' : '#e5e7eb' },
+              isDark && { shadowColor: '#000' },
+            ]}
+          >
+            <Ionicons name="cash-outline" size={28} color="#7c3aed" style={styles.iconLeft} />
+            <View style={{ flex: 1 }}>
+              <Text style={[styles.label, { color: isDark ? '#a5b4fc' : '#7c3aed' }]}>Loan Amount</Text>
+              <TextInput
+                style={[styles.input, { color: isDark ? '#fff' : '#1e293b' }]}
+                keyboardType="numeric"
+                placeholder="P 100,000"
+                value={loanAmount}
+                onFocus={() => setFocused('amount')}
+                onBlur={() => setFocused(null)}
+                onChangeText={setLoanAmount}
+                placeholderTextColor={isDark ? '#a5b4fc' : '#7c3aed'}
+              />
+            </View>
+          </View>
+          {/* Interest Rate */}
+          <View
+            style={[
+              styles.inputCard,
+              { width: cardWidth, backgroundColor: isDark ? '#23232a' : '#fff', borderColor: focused === 'rate' ? '#7c3aed' : '#e5e7eb' },
+            ]}
+          >
+            <Ionicons name="pricetag-outline" size={28} color="#7c3aed" style={styles.iconLeft} />
+            <View style={{ flex: 1 }}>
+              <Text style={[styles.label, { color: isDark ? '#a5b4fc' : '#7c3aed' }]}>Interest Rate (%)</Text>
+              <TextInput
+                style={[styles.input, { color: isDark ? '#fff' : '#1e293b' }]}
+                keyboardType="decimal-pad"
+                placeholder="e.g. 12.5"
+                value={interestRate}
+                onFocus={() => setFocused('rate')}
+                onBlur={() => setFocused(null)}
+                onChangeText={setInterestRate}
+                placeholderTextColor={isDark ? '#a5b4fc' : '#7c3aed'}
+              />
+            </View>
+          </View>
+          {/* Term Months */}
+          <View
+            style={[
+              styles.inputCard,
+              { width: cardWidth, backgroundColor: isDark ? '#23232a' : '#fff', borderColor: focused === 'term' ? '#7c3aed' : '#e5e7eb' },
+            ]}
+          >
+            <Ionicons name="calendar-outline" size={28} color="#7c3aed" style={styles.iconLeft} />
+            <View style={{ flex: 1 }}>
+              <Text style={[styles.label, { color: isDark ? '#a5b4fc' : '#7c3aed' }]}>Term (Months)</Text>
+              <TextInput
+                style={[styles.input, { color: isDark ? '#fff' : '#1e293b' }]}
+                keyboardType="number-pad"
+                placeholder="e.g. 36"
+                value={termMonths}
+                onFocus={() => setFocused('term')}
+                onBlur={() => setFocused(null)}
+                onChangeText={setTermMonths}
+                placeholderTextColor={isDark ? '#a5b4fc' : '#7c3aed'}
+              />
+            </View>
+          </View>
+          {/* Down Payment */}
+          <View
+            style={[
+              styles.inputCard,
+              { width: cardWidth, backgroundColor: isDark ? '#23232a' : '#fff', borderColor: focused === 'down' ? '#7c3aed' : '#e5e7eb' },
+            ]}
+          >
+            <Ionicons name="remove-circle-outline" size={28} color="#7c3aed" style={styles.iconLeft} />
+            <View style={{ flex: 1 }}>
+              <Text style={[styles.label, { color: isDark ? '#a5b4fc' : '#7c3aed' }]}>Down Payment (optional)</Text>
+              <TextInput
+                style={[styles.input, { color: isDark ? '#fff' : '#1e293b' }]}
+                keyboardType="numeric"
+                placeholder="P 10,000"
+                value={downPayment}
+                onFocus={() => setFocused('down')}
+                onBlur={() => setFocused(null)}
+                onChangeText={setDownPayment}
+                placeholderTextColor={isDark ? '#a5b4fc' : '#7c3aed'}
+              />
+            </View>
+          </View>
+        </ScrollView>
+        {/* Sticky Calculate Button */}
+        <View style={[styles.footerCard, { backgroundColor: isDark ? '#23232a' : '#fff', borderColor: '#7c3aed', width: cardWidth }]}>
+          <TouchableOpacity
+            style={[
+              styles.calcButton,
+              {
+                opacity: valid ? 1 : 0.5,
+                backgroundColor: valid ? undefined : '#a5b4fc',
+              },
+            ]}
+            activeOpacity={0.85}
+            onPress={handleCalculate}
+            disabled={!valid}
+          >
+            <View style={styles.gradientBg} />
+            <Text style={styles.calcButtonText}>Calculate</Text>
+          </TouchableOpacity>
+        </View>
+        {/* Result Modal */}
+        <Modal visible={modalVisible} animationType="slide" transparent>
+          <View style={styles.modalBackdrop}>
+            <AnimatedResultModal
+              result={result}
+              onClose={() => setModalVisible(false)}
+              onExportCSV={handleExportCSV}
+              csvLoading={csvLoading}
+              isDark={isDark}
             />
           </View>
-        </View>
-        {/* Interest Rate */}
-        <View
-          style={[
-            styles.inputCard,
-            { width: cardWidth, backgroundColor: isDark ? '#23232a' : '#fff', borderColor: focused === 'rate' ? '#7c3aed' : '#e5e7eb' },
-          ]}
-        >
-          <Ionicons name="pricetag-outline" size={28} color="#7c3aed" style={styles.iconLeft} />
-          <View style={{ flex: 1 }}>
-            <Text style={[styles.label, { color: isDark ? '#a5b4fc' : '#7c3aed' }]}>Interest Rate (%)</Text>
-            <TextInput
-              style={[styles.input, { color: isDark ? '#fff' : '#1e293b' }]}
-              keyboardType="decimal-pad"
-              placeholder="e.g. 12.5"
-              value={interestRate}
-              onFocus={() => setFocused('rate')}
-              onBlur={() => setFocused(null)}
-              onChangeText={setInterestRate}
-              placeholderTextColor={isDark ? '#a5b4fc' : '#7c3aed'}
-            />
-          </View>
-        </View>
-        {/* Term Months */}
-        <View
-          style={[
-            styles.inputCard,
-            { width: cardWidth, backgroundColor: isDark ? '#23232a' : '#fff', borderColor: focused === 'term' ? '#7c3aed' : '#e5e7eb' },
-          ]}
-        >
-          <Ionicons name="calendar-outline" size={28} color="#7c3aed" style={styles.iconLeft} />
-          <View style={{ flex: 1 }}>
-            <Text style={[styles.label, { color: isDark ? '#a5b4fc' : '#7c3aed' }]}>Term (Months)</Text>
-            <TextInput
-              style={[styles.input, { color: isDark ? '#fff' : '#1e293b' }]}
-              keyboardType="number-pad"
-              placeholder="e.g. 36"
-              value={termMonths}
-              onFocus={() => setFocused('term')}
-              onBlur={() => setFocused(null)}
-              onChangeText={setTermMonths}
-              placeholderTextColor={isDark ? '#a5b4fc' : '#7c3aed'}
-            />
-          </View>
-        </View>
-        {/* Down Payment */}
-        <View
-          style={[
-            styles.inputCard,
-            { width: cardWidth, backgroundColor: isDark ? '#23232a' : '#fff', borderColor: focused === 'down' ? '#7c3aed' : '#e5e7eb' },
-          ]}
-        >
-          <Ionicons name="remove-circle-outline" size={28} color="#7c3aed" style={styles.iconLeft} />
-          <View style={{ flex: 1 }}>
-            <Text style={[styles.label, { color: isDark ? '#a5b4fc' : '#7c3aed' }]}>Down Payment (optional)</Text>
-            <TextInput
-              style={[styles.input, { color: isDark ? '#fff' : '#1e293b' }]}
-              keyboardType="numeric"
-              placeholder="P 10,000"
-              value={downPayment}
-              onFocus={() => setFocused('down')}
-              onBlur={() => setFocused(null)}
-              onChangeText={setDownPayment}
-              placeholderTextColor={isDark ? '#a5b4fc' : '#7c3aed'}
-            />
-          </View>
-        </View>
-      </ScrollView>
-      {/* Sticky Calculate Button */}
-      <View style={[styles.footerCard, { backgroundColor: isDark ? '#23232a' : '#fff', borderColor: '#7c3aed', width: cardWidth }]}>
-        <TouchableOpacity
-          style={[
-            styles.calcButton,
-            {
-              opacity: valid ? 1 : 0.5,
-              backgroundColor: valid ? undefined : '#a5b4fc',
-            },
-          ]}
-          activeOpacity={0.85}
-          onPress={handleCalculate}
-          disabled={!valid}
-        >
-          <View style={styles.gradientBg} />
-          <Text style={styles.calcButtonText}>Calculate</Text>
-        </TouchableOpacity>
-      </View>
-      {/* Result Modal */}
-      <Modal visible={modalVisible} animationType="slide" transparent>
-        <View style={styles.modalBackdrop}>
-          <AnimatedResultModal
-            result={result}
-            onClose={() => setModalVisible(false)}
-            onExportCSV={handleExportCSV}
-            csvLoading={csvLoading}
-            isDark={isDark}
-          />
-        </View>
-      </Modal>
-    </KeyboardAvoidingView>
+        </Modal>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 

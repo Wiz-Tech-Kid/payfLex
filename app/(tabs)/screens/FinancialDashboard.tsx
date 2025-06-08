@@ -2,15 +2,15 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as React from 'react';
 import {
-  ActivityIndicator,
-  Dimensions,
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Dimensions,
+    SafeAreaView,
+    ScrollView,
+    StatusBar,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import SidebarDrawer from '../../../components/ui/SidebarDrawer';
 
@@ -220,7 +220,12 @@ export default function Dashboard({ navigation }: { navigation?: any }) {
           )}
         </View>
       </LinearGradient>
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.content}
+        contentContainerStyle={{ paddingBottom: 32 }}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
         {financialSummary && (
           <Card style={styles.sectionCard}>
             <View style={styles.cardHeader}>
@@ -388,7 +393,6 @@ export default function Dashboard({ navigation }: { navigation?: any }) {
             <Text style={styles.secondaryActionText}>Make Payment</Text>
           </TouchableOpacity>
         </View>
-        <View style={styles.bottomSpacing} />
       </ScrollView>
     </SafeAreaView>
   );

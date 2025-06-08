@@ -28,8 +28,7 @@ export default function QRCodeScreen() {
   const [qrValue, setQrValue] = useState<string | null>(null);
   const [scannedData, setScannedData] = useState<string | null>(null);
 
-  // Request camera *permission* is removed, since we won't actually use it.
-  // useEffect(() => { … }, []);
+
 
   // Countdown timer for QR expiration
   useEffect(() => {
@@ -49,7 +48,7 @@ export default function QRCodeScreen() {
     return () => clearInterval(interval);
   }, [qrValue]);
 
-  // Generate a dummy DID-based QR
+  
   const generateQr = () => {
     const did = generateRandomDid();
     setQrValue(did);
@@ -57,7 +56,7 @@ export default function QRCodeScreen() {
     setScannedData(null);
   };
 
-  // Simulate scanning by simply "reading" the current QR value
+  
   const simulateScan = () => {
     if (qrValue) {
       setScannedData(qrValue);

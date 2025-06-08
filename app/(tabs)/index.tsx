@@ -1,7 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-<<<<<<< HEAD
 import * as React from 'react';
 import { useEffect, useRef } from 'react';
 import {
@@ -17,11 +16,6 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-=======
-import React, { useState } from 'react';
-import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-//import { loginUser } from '../../services/authService';
->>>>>>> fab05bb5abfce8e2193d4e0c946293557e275116
 
 const { width, height } = Dimensions.get('window');
 
@@ -42,7 +36,6 @@ const PAYMENT_METHODS = [
 export default function Index() {
   const router = useRouter();
 
-<<<<<<< HEAD
   // Animation refs
   const rotate1 = useRef(new Animated.Value(0)).current;
   const rotate2 = useRef(new Animated.Value(0)).current;
@@ -167,20 +160,6 @@ export default function Index() {
   // Interpolations for rotation
   const rotate1Deg = rotate1.interpolate({ inputRange: [0, 4], outputRange: ['0deg', '360deg'] });
   const rotate2Deg = rotate2.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '-360deg'] });
-=======
-  const handleLogin = async () => {
-    setLoading(true);
-    setError('');
-    try {
-      // loginUser expects { identifier, password }
-      //await loginUser({ identifier: username.trim(), password });
-      router.replace('./screens/HomeTabs');
-    } catch (e: any) {
-      setError(e?.message || 'Login failed. Please check your credentials.');
-    }
-    setLoading(false);
-  };
->>>>>>> fab05bb5abfce8e2193d4e0c946293557e275116
 
   return (
     <SafeAreaView style={styles.root}>
@@ -229,7 +208,7 @@ export default function Index() {
         />
       ))}
       <ScrollView
-        contentContainerStyle={styles.scrollContainer}
+        contentContainerStyle={[styles.scrollContainer, { flexGrow: 1, justifyContent: 'center', paddingBottom: 32 }]}
         showsVerticalScrollIndicator={false}
         bounces
         keyboardShouldPersistTaps="handled"

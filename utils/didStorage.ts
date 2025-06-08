@@ -1,4 +1,4 @@
-// utils/didStorage.ts
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as FileSystem from 'expo-file-system';
 import 'react-native-get-random-values';
@@ -11,7 +11,6 @@ export async function setDid(userId: string, did: string) {
     const content = await FileSystem.readAsStringAsync(DID_REGISTRY_PATH);
     registry = JSON.parse(content);
   } catch {}
-  // Remove any existing entry for this user
   registry = registry.filter((entry) => entry.uid !== userId);
   registry.push({ uid: userId, did });
   await FileSystem.writeAsStringAsync(DID_REGISTRY_PATH, JSON.stringify(registry, null, 2));

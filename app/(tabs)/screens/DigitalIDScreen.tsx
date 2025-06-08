@@ -1,9 +1,11 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
 import * as React from 'react';
 import {
-  ActivityIndicator,
-  Alert,
+  Dimensions,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
@@ -13,221 +15,127 @@ import {
 } from 'react-native';
 import SidebarDrawer from '../../../components/ui/SidebarDrawer';
 import { Colors } from '../../../constants/Colors';
-import { getUserProfileBySupabaseId, LocalUserProfile, saveUserProfile } from '../../../modules/DIDstorage';
-import {
-  getCurrentDid,
-  getUserByDid,
-  UserRecord,
-} from '../../../modules/DigitalIdentityLedger';
-import { supabase } from '../../../supabaseClient'; // adjust path if needed
+
+const DUMMY_PROFILE = {
+  fullName: 'Nickel Sentsima',
+  email: 'n.bobo@example.com',
+  phone: '+26771234567',
+  omangId: '02391234', 
+  gender: 'male',
+  did: 'did:payflex:0033fe22-8a46-4fad-bc06-1e3ae8366e1f',
+  createdAt: new Date().toISOString(),
+  
+};
+
+const { width } = Dimensions.get('window');
 
 export default function DigitalIDScreen() {
-  const [loading, setLoading] = React.useState(true);
-  const [did, setDid] = React.useState<string | null>(null);
-  const [user, setUser] = React.useState<UserRecord | null>(null);
-  const [error, setError] = React.useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
-  const [localProfile, setLocalProfile] = React.useState<LocalUserProfile | null>(null);
   const [editMode, setEditMode] = React.useState(false);
-  const [editFullName, setEditFullName] = React.useState('');
-  const [editPhone, setEditPhone] = React.useState('');
-  const [editGender, setEditGender] = React.useState('');
-  const navigation = useNavigation<any>();
-
-  React.useEffect(() => {
-    let mounted = true;
-
-    const loadUserData = async () => {
-      setLoading(true);
-      setError(null);
-
-      // 1. Fetch current DID (from AsyncStorage or however getCurrentDid is implemented)
-      const currentDid = await getCurrentDid();
-      if (!mounted) return;
-
-      // 2. If no DID, show error and bail out
-      if (!currentDid) {
-        setDid(null);
-        setUser(null);
-        setError('Please log in first.');
-        setLoading(false);
-        return;
-      }
-
-      // 3. We have a DID, so fetch the corresponding user record
-      setDid(currentDid);
-      const userRecord = await getUserByDid(currentDid);
-      if (!mounted) return;
-
-      // 4. If user not found, set error; otherwise store user
-      if (!userRecord) {
-        setError('User not found.');
-        setUser(null);
-        setDid(null);
-      } else {
-        setUser(userRecord);
-        setDid(currentDid);
-      }
-
-      setLoading(false);
-    };
-
-    const loadProfile = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        navigation.navigate('/(tabs)/screens/Login');
-        return;
-      }
-      const profile = await getUserProfileBySupabaseId(user.id);
-      if (mounted) {
-        setLocalProfile(profile);
-        if (profile) {
-          setEditFullName(profile.fullName);
-          setEditPhone(profile.phone);
-          setEditGender(profile.gender);
-        }
-      }
-    };
-
-    loadUserData();
-    loadProfile();
-
-    // Cleanup: prevent state updates after unmount
-    return () => {
-      mounted = false;
-    };
-  }, []);
+  const [editFullName, setEditFullName] = React.useState(DUMMY_PROFILE.fullName);
+  const [editPhone, setEditPhone] = React.useState(DUMMY_PROFILE.phone);
+  const [editGender, setEditGender] = React.useState(DUMMY_PROFILE.gender);
+  const router = useRouter();
 
   const handleSidebarNav = (route: string) => {
     setSidebarOpen(false);
-    navigation.navigate(`/(tabs)/screens/${route}`);
+    
   };
 
-  const handleLogout = async () => {
+  const handleSidebarLogout = () => {
     setSidebarOpen(false);
-    await AsyncStorage.removeItem('userDid');
-    Alert.alert('Logged out', 'You have been logged out.', [
-      {
-        text: 'OK',
-        // Replace 'index' with your actual login route if different
-        onPress: () => navigation.navigate('/(tabs)/index'),
-      },
-    ]);
+    // Do nothing else, or add your custom logic here
   };
 
   const handleSaveProfile = async () => {
-    if (!localProfile) return;
-    try {
-      // Optionally update Supabase user data here
-      await saveUserProfile({
-        ...localProfile,
-        fullName: editFullName,
-        phone: editPhone,
-        gender: editGender,
-      });
-      setLocalProfile({
-        ...localProfile,
-        fullName: editFullName,
-        phone: editPhone,
-        gender: editGender,
-      });
-      setEditMode(false);
-    } catch (err) {
-      Alert.alert('Error', 'Failed to save local profile');
-    }
+    setEditMode(false);
+    Keyboard.dismiss();
   };
 
-  // 1. Loading state
-  if (loading) {
-    return (
-      <View style={styles.centered}>
-        <ActivityIndicator size="large" color="#1976d2" />
-      </View>
-    );
-  }
-
-  // 2. Error state
-  if (error) {
-    return (
-      <View style={styles.centered}>
-        <Text style={styles.errorText}>{error}</Text>
-      </View>
-    );
-  }
-
-  // 3. No user record (fallback)
-  if (!localProfile) {
-    return (
-      <View style={styles.centered}>
-        <Text style={styles.errorText}>No local profile found. Please re-enter your details.</Text>
-        <TouchableOpacity
-          style={styles.logoutButton}
-          onPress={() => navigation.navigate('/(tabs)/screens/AccountCreationScreen', { email: '' })}
-        >
-          <Text style={styles.logoutButtonText}>Go to Profile Settings</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
-
-  // 4. Main UI
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <SidebarDrawer
-        visible={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
-        onNavigate={handleSidebarNav}
-        onLogout={handleLogout}
-      />
-      <Text style={styles.heading}>Your Digital Identity</Text>
-      <View style={styles.card}>
-        {editMode ? (
-          <>
-            <LabelValue label="Full Name" value={
-              <TextInput value={editFullName} onChangeText={setEditFullName} style={styles.input} />
-            } />
-            <Divider />
-            <LabelValue label="Phone Number" value={
-              <TextInput value={editPhone} onChangeText={setEditPhone} style={styles.input} />
-            } />
-            <Divider />
-            <LabelValue label="Gender" value={
-              <TextInput value={editGender} onChangeText={setEditGender} style={styles.input} />
-            } />
-            <Divider />
-            <TouchableOpacity style={styles.logoutButton} onPress={handleSaveProfile}>
-              <Text style={styles.logoutButtonText}>Save</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.logoutButton} onPress={() => setEditMode(false)}>
-              <Text style={styles.logoutButtonText}>Cancel</Text>
-            </TouchableOpacity>
-          </>
-        ) : (
-          <>
-            <LabelValue label="Full Name" value={localProfile.fullName} />
-            <Divider />
-            <LabelValue label="Email" value={localProfile.email} />
-            <Divider />
-            <LabelValue label="Phone Number" value={localProfile.phone} />
-            <Divider />
-            <LabelValue label="Omang ID" value={localProfile.omangId} />
-            <Divider />
-            <LabelValue label="Gender" value={localProfile.gender} />
-            <Divider />
-            <LabelValue label="DID" value={localProfile.did} />
-            <Divider />
-            <LabelValue label="Created At" value={new Date(localProfile.createdAt).toLocaleString()} />
-            <TouchableOpacity style={styles.logoutButton} onPress={() => setEditMode(true)}>
-              <Text style={styles.logoutButtonText}>Edit Profile</Text>
-            </TouchableOpacity>
-          </>
-        )}
-      </View>
-
-      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-        <Text style={styles.logoutButtonText}>Log Out</Text>
-      </TouchableOpacity>
-    </ScrollView>
+    <SafeAreaView style={styles.safeArea}>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 24}
+      >
+        <ScrollView
+          contentContainerStyle={[styles.container, { flexGrow: 1, justifyContent: 'center', paddingBottom: 32 }]}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <SidebarDrawer
+            visible={sidebarOpen}
+            onClose={() => setSidebarOpen(false)}
+            onNavigate={handleSidebarNav}
+            onLogout={handleSidebarLogout}
+          />
+          <Text style={styles.heading}>Your Digital Identity</Text>
+          <View style={styles.card}>
+            {editMode ? (
+              <>
+                <LabelValue label="Full Name" value={
+                  <TextInput
+                    value={editFullName}
+                    onChangeText={setEditFullName}
+                    style={styles.input}
+                    placeholder="Full Name"
+                    placeholderTextColor="#aaa"
+                  />
+                } />
+                <Divider />
+                <LabelValue label="Phone Number" value={
+                  <TextInput
+                    value={editPhone}
+                    onChangeText={setEditPhone}
+                    style={styles.input}
+                    placeholder="Phone Number"
+                    placeholderTextColor="#aaa"
+                    keyboardType="phone-pad"
+                  />
+                } />
+                <Divider />
+                <LabelValue label="Gender" value={
+                  <TextInput
+                    value={editGender}
+                    onChangeText={setEditGender}
+                    style={styles.input}
+                    placeholder="Gender"
+                    placeholderTextColor="#aaa"
+                  />
+                } />
+                <Divider />
+                <TouchableOpacity style={styles.saveButton} onPress={handleSaveProfile}>
+                  <Text style={styles.saveButtonText}>Save</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.cancelButton} onPress={() => { setEditMode(false); Keyboard.dismiss(); }}>
+                  <Text style={styles.cancelButtonText}>Cancel</Text>
+                </TouchableOpacity>
+              </>
+            ) : (
+              <>
+                <LabelValue label="Full Name" value={editFullName} />
+                <Divider />
+                <LabelValue label="Email" value={DUMMY_PROFILE.email} />
+                <Divider />
+                <LabelValue label="Phone Number" value={editPhone} />
+                <Divider />
+                <LabelValue label="Omang ID" value={DUMMY_PROFILE.omangId} />
+                <Divider />
+                <LabelValue label="Gender" value={editGender} />
+                <Divider />
+                <LabelValue label="DID" value={DUMMY_PROFILE.did} />
+                <Divider />
+                <LabelValue label="Created At" value={new Date(DUMMY_PROFILE.createdAt).toLocaleString()} />
+                <TouchableOpacity style={styles.editButton} onPress={() => setEditMode(true)}>
+                  <Text style={styles.editButtonText}>Edit Profile</Text>
+                </TouchableOpacity>
+              </>
+            )}
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
@@ -235,7 +143,7 @@ function LabelValue({ label, value }: { label: string; value: string | React.Rea
   return (
     <View style={styles.labelValueRow}>
       <Text style={styles.label}>{label}:</Text>
-      <Text style={styles.value}>{value}</Text>
+      <View style={styles.valueWrap}>{typeof value === 'string' ? <Text style={styles.value}>{value}</Text> : value}</View>
     </View>
   );
 }
@@ -245,12 +153,18 @@ function Divider() {
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: Colors.light.background,
+  },
   container: {
     flexGrow: 1,
-    backgroundColor: Colors.light.background,
     alignItems: 'center',
-    padding: 16,
+    padding: width < 350 ? 8 : 16,
     paddingTop: 32,
+    paddingBottom: 32,
+    minHeight: '100%',
+    backgroundColor: Colors.light.background,
   },
   heading: {
     fontSize: 22,
@@ -258,32 +172,43 @@ const styles = StyleSheet.create({
     marginBottom: 18,
     color: Colors.light.tint,
     textAlign: 'center',
+    letterSpacing: 0.5,
   },
   card: {
-    backgroundColor: Colors.light.background,
-    borderRadius: 14,
-    padding: 20,
+    backgroundColor: '#fff',
+    borderRadius: 18,
+    padding: width < 350 ? 14 : 20,
     width: '100%',
-    elevation: 2,
+    maxWidth: 420,
+    elevation: 4,
     shadowColor: '#000',
-    shadowOpacity: 0.07,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.10,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
     marginBottom: 24,
+    alignItems: 'center',
   },
   labelValueRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginVertical: 7,
+    width: '100%',
+    alignItems: 'center',
+    gap: 8,
   },
   label: {
     fontWeight: '600',
     color: Colors.light.icon,
-    fontSize: 16,
+    fontSize: 15,
+    flex: 1,
+  },
+  valueWrap: {
+    flex: 2,
+    alignItems: 'flex-end',
   },
   value: {
     color: Colors.light.text,
-    fontSize: 16,
+    fontSize: 15,
     flexShrink: 1,
     textAlign: 'right',
     marginLeft: 10,
@@ -292,39 +217,56 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: '#e0e0e0',
     marginVertical: 4,
+    width: '100%',
   },
-  logoutButton: {
-    backgroundColor: '#d32f2f',
+  editButton: {
+    backgroundColor: Colors.light.tint,
     borderRadius: 8,
-    paddingVertical: 14,
+    paddingVertical: 12,
     alignItems: 'center',
     width: '100%',
-    marginTop: 24,
+    marginTop: 18,
   },
-  logoutButtonText: {
-    color: Colors.light.background,
+  editButtonText: {
+    color: '#fff',
     fontWeight: 'bold',
-    fontSize: 17,
-  },
-  centered: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f2f2f2',
-  },
-  errorText: {
-    color: '#d32f2f',
     fontSize: 16,
-    textAlign: 'center',
-    margin: 20,
+  },
+  saveButton: {
+    backgroundColor: '#388e3c',
+    borderRadius: 8,
+    paddingVertical: 12,
+    alignItems: 'center',
+    width: '100%',
+    marginTop: 18,
+  },
+  saveButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  cancelButton: {
+    backgroundColor: '#bdbdbd',
+    borderRadius: 8,
+    paddingVertical: 12,
+    alignItems: 'center',
+    width: '100%',
+    marginTop: 10,
+  },
+  cancelButtonText: {
+    color: '#333',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
   input: {
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 8,
     padding: 10,
-    fontSize: 16,
+    fontSize: 15,
     color: Colors.light.text,
     marginTop: 8,
+    width: '100%',
+    backgroundColor: '#f8fafc',
   },
 });

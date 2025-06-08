@@ -64,8 +64,11 @@ export default function AccountCreationScreen() {
   // Auto-detect gender from omangID if possible
   let finalGender: 'Male' | 'Female' | 'Auto-detect' = gender as any;
   if (gender === 'Auto-detect' && omangRegex.test(omangID)) {
-    const seventhDigit = parseInt(omangID[6], 10);
-    finalGender = seventhDigit >= 5 ? 'Male' : 'Female';
+    // Botswana Omang: 5th digit (index 4) is 1=Male, 0=Female
+    const fifthDigit = omangID[4];
+    if (fifthDigit === '1') finalGender = 'Male';
+    else if (fifthDigit === '0') finalGender = 'Female';
+    else finalGender = 'Auto-detect';
   }
 
   const validate = () => {
@@ -208,6 +211,10 @@ export default function AccountCreationScreen() {
               keyboardType: 'number-pad',
               maxLength: 9,
             })}
+            {/* Show error if Omang ID is invalid */}
+            {!omangRegex.test(omangID.trim()) && omangID.length > 0 && (
+              <Text style={styles.error}>Invalid Omang ID. Must be 9 digits.</Text>
+            )}
             {renderInput(password, setPassword, 'Password', 'password', {
               secureTextEntry: true,
             })}

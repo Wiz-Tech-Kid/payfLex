@@ -2,23 +2,23 @@ import { Ionicons } from '@expo/vector-icons';
 import * as React from 'react';
 import { useState } from 'react';
 import {
-    ActivityIndicator,
-    Dimensions,
-    KeyboardAvoidingView,
-    Platform,
-    SafeAreaView,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    useColorScheme,
-    View,
+  ActivityIndicator,
+  Dimensions,
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  useColorScheme,
+  View,
 } from 'react-native';
 
 const { width } = Dimensions.get('window');
 
-// Supported providers with prefixes (mock)
+
 const providers = [
   { name: 'MyZaka', prefix: '71', color: '#0ea5e9', code: '*151#' },
   { name: 'Orange Money', prefix: '72', color: '#fb923c', code: '*145#' },
@@ -73,8 +73,13 @@ export default function MobileWalletScreen() {
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 24}
       >
-        <ScrollView contentContainerStyle={styles.container}>
+        <ScrollView
+          contentContainerStyle={[styles.container, { flexGrow: 1, justifyContent: 'center', paddingBottom: 32 }]}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
           <Text
             style={[
               styles.header,

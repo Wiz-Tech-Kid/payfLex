@@ -252,7 +252,7 @@ export default function LoanApplication() {
                 <View style={styles.pendingInfo}>
                   <Ionicons name="information-circle-outline" size={20} color="#f59e0b" />
                   <Text style={styles.pendingText}>
-                    You'll be notified within 24 hours about your application status.
+                    You&#39;ll be notified within 24 hours about your application status.
                   </Text>
                 </View>
               )}
@@ -366,7 +366,7 @@ export default function LoanApplication() {
               </View>
 
               <View style={styles.inputGroup}>
-                <Text style={styles.label}>What's it for?</Text>
+                <Text style={styles.label}>What&#39;s it for?</Text>
                 <Controller
                   control={control}
                   name="purpose"
@@ -563,7 +563,7 @@ export default function LoanApplication() {
                 <View style={styles.bannerContent}>
                   <Text style={styles.bannerTitle}>Instant Approval Available</Text>
                   <Text style={styles.bannerText}>
-                    Most applications are approved instantly. You'll know your result immediately.
+                    Most applications are approved instantly. You&#39;ll know your result immediately.
                   </Text>
                 </View>
               </View>

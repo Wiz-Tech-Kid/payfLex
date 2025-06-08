@@ -16,7 +16,6 @@ import {
   View,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
-import { getUserProfileBySupabaseId } from '../../../modules/DIDstorage';
 import { supabase } from '../../../supabaseClient';
 
 const { width } = Dimensions.get('window');
@@ -29,16 +28,16 @@ export default function LoginScreen() {
   const [error, setError] = React.useState('');
   const [rememberMe, setRememberMe] = React.useState(false); // <-- Add state
 
-  // Animation states
+  
   const logoAnim = React.useRef(new Animated.Value(0)).current;
   const cardAnim = React.useRef(new Animated.Value(60)).current;
   const cardFade = React.useRef(new Animated.Value(0)).current;
 
-  // Animated background "waves" effect (VANTA-like)
+  
   const waveAnim = React.useRef(new Animated.Value(0)).current;
 
   React.useEffect(() => {
-    // Animate the background "waves"
+ 
     Animated.loop(
       Animated.timing(waveAnim, {
         toValue: 1,
@@ -76,7 +75,7 @@ export default function LoginScreen() {
     setError('');
 
     try {
-      // Use supabase.auth.signInWithPassword and get user.id
+      
       const {
         data: { user },
         error,
@@ -86,12 +85,10 @@ export default function LoginScreen() {
       });
       if (error || !user) throw new Error('Invalid credentials');
 
-      // Try to get local profile and set current_user_did
-      const profile = await getUserProfileBySupabaseId(user.id);
-      if (profile) {
-        await AsyncStorage.setItem('current_user_did', profile.did);
-      }
-      // Navigate to HomeTabs regardless
+      
+      await AsyncStorage.setItem('current_user_did', 'did:payflex:dummy123456789');
+
+     
       setTimeout(() => {
         setLoading(false);
         router.replace('/(tabs)/screens/HomeTabs');
@@ -113,25 +110,25 @@ export default function LoginScreen() {
         style={[
           styles.vantaWaves,
           {
-            // Simulate wave movement by animating backgroundPosition
+            
             transform: [
               {
                 translateX: waveAnim.interpolate({
                   inputRange: [0, 1],
-                  outputRange: [0, -80], // move left
+                  outputRange: [0, -80], 
                 }),
               },
               {
                 translateY: waveAnim.interpolate({
                   inputRange: [0, 1],
-                  outputRange: [0, 20], // slight vertical movement
+                  outputRange: [0, 20], 
                 }),
               },
             ],
           },
         ]}
       >
-        {/* Simulated SVG waves */}
+        
         <View style={StyleSheet.absoluteFill}>
           <Animated.View
             style={{

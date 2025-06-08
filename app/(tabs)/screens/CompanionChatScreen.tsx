@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { getAIResponse } from '../../../modules/MoneyCompanionAI';
 
 export default function CompanionChatScreen() {
@@ -16,7 +16,7 @@ export default function CompanionChatScreen() {
       ...msgs,
       {
         text: aiMsg.text,
-        from: aiMsg.from === 'user' ? 'user' : 'ai', // ensure type
+        from: aiMsg.from === 'user' ? 'user' : 'ai',
       },
     ]);
     setInput('');
@@ -26,33 +26,37 @@ export default function CompanionChatScreen() {
   };
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-      <ScrollView
-        style={styles.messages}
-        ref={scrollViewRef}
-        contentContainerStyle={{ padding: 16 }}
-      >
-        {messages.map((msg, idx) => (
-          <View
-            key={idx}
-            style={[styles.bubble, msg.from === 'user' ? styles.userBubble : styles.aiBubble]}
-          >
-            <Text style={styles.bubbleText}>{msg.text}</Text>
-          </View>
-        ))}
-      </ScrollView>
-      <View style={styles.inputRow}>
-        <TextInput
-          style={styles.input}
-          placeholder="Type a message..."
-          value={input}
-          onChangeText={setInput}
-        />
-        <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
-          <Text style={styles.sendButtonText}>Send</Text>
-        </TouchableOpacity>
-      </View>
-    </KeyboardAvoidingView>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        <ScrollView
+          style={styles.messages}
+          ref={scrollViewRef}
+          contentContainerStyle={{ padding: 16, flexGrow: 1, justifyContent: 'flex-end' }}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          {messages.map((msg, idx) => (
+            <View
+              key={idx}
+              style={[styles.bubble, msg.from === 'user' ? styles.userBubble : styles.aiBubble]}
+            >
+              <Text style={styles.bubbleText}>{msg.text}</Text>
+            </View>
+          ))}
+        </ScrollView>
+        <View style={styles.inputRow}>
+          <TextInput
+            style={styles.input}
+            placeholder="Type a message..."
+            value={input}
+            onChangeText={setInput}
+          />
+          <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
+            <Text style={styles.sendButtonText}>Send</Text>
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
@@ -108,4 +112,3 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
-// No changes needed unless you have a floating button here; if so, remove it from login/landing

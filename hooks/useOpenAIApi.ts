@@ -1,11 +1,9 @@
-// hooks/useOpenAIApi.ts
 import { useCallback } from 'react';
 
 const OPENAI_API_KEY = process.env.EXPO_PUBLIC_OPENAI_API_KEY || '';
 const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions';
 
 export function useOpenAIApi() {
-  // Returns a function that takes simulation input and returns a suggestion string
   const getOpenAIInsights = useCallback(async (input: any) => {
     if (!OPENAI_API_KEY) return '';
     const prompt = `A user is simulating a loan. Their monthly income is ${input.income}, expenses are ${input.expenses}, and loan amount is ${input.loanAmount}. Give a short, practical financial suggestion for this scenario.`;

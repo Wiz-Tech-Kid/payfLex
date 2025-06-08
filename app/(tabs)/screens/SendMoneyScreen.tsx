@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import * as React from 'react';
-import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 import SidebarDrawer from '../../../components/ui/SidebarDrawer';
 import { Colors } from '../../../constants/Colors';
@@ -16,7 +16,7 @@ export default function SendMoneyScreen() {
   const [loading, setLoading] = React.useState(false);
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
 
-  // TODO: Replace this with actual logic to get the current user's DID
+  
   const currentUserDid = 'your-current-user-did';
 
   const handleSend = async () => {
@@ -38,12 +38,12 @@ export default function SendMoneyScreen() {
 
   const handleSidebarNav = (route: string) => {
     setSidebarOpen(false);
-    // Use navigation logic if needed
+   
   };
 
   const handleLogout = () => {
     setSidebarOpen(false);
-    // Use navigation logic if needed
+    
   };
 
   // Payment Option Handlers
@@ -61,57 +61,63 @@ export default function SendMoneyScreen() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <SidebarDrawer
-        visible={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
-        onNavigate={handleSidebarNav}
-        onLogout={handleLogout}
-      />
-      <Text style={styles.balance}>Balance: P {balance}</Text>
-      <View style={styles.row}>
-        <TextInput
-          style={[styles.input, { flex: 2 }]}
-          placeholder="Recipient DID or Alias"
-          value={recipient}
-          onChangeText={setRecipient}
-          placeholderTextColor={Colors.light.icon}
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
+      <ScrollView
+        contentContainerStyle={[styles.container, { flexGrow: 1, justifyContent: 'center', paddingBottom: 32 }]}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        <SidebarDrawer
+          visible={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
+          onNavigate={handleSidebarNav}
+          onLogout={handleLogout}
         />
-        <TextInput
-          style={[styles.input, { flex: 1, marginLeft: 8 }]}
-          placeholder="Amount"
-          value={amount}
-          onChangeText={setAmount}
-          keyboardType="numeric"
-          placeholderTextColor={Colors.light.icon}
-        />
-      </View>
-      <TouchableOpacity style={styles.button} onPress={handleSend} disabled={loading}>
-        <Text style={styles.buttonText}>{loading ? 'Sending...' : 'Send'}</Text>
-      </TouchableOpacity>
-      {message ? <Text style={styles.message}>{message}</Text> : null}
+        <Text style={styles.balance}>Balance: P {balance}</Text>
+        <View style={styles.row}>
+          <TextInput
+            style={[styles.input, { flex: 2 }]}
+            placeholder="Recipient DID or Alias"
+            value={recipient}
+            onChangeText={setRecipient}
+            placeholderTextColor={Colors.light.icon}
+          />
+          <TextInput
+            style={[styles.input, { flex: 1, marginLeft: 8 }]}
+            placeholder="Amount"
+            value={amount}
+            onChangeText={setAmount}
+            keyboardType="numeric"
+            placeholderTextColor={Colors.light.icon}
+          />
+        </View>
+        <TouchableOpacity style={styles.button} onPress={handleSend} disabled={loading}>
+          <Text style={styles.buttonText}>{loading ? 'Sending...' : 'Send'}</Text>
+        </TouchableOpacity>
+        {message ? <Text style={styles.message}>{message}</Text> : null}
 
-      <Text style={styles.title}>Choose Payment Method</Text>
-      <View style={styles.paymentOptions}>
-        <TouchableOpacity style={styles.paymentOption} onPress={handleBankTransfer}>
-          <Text style={styles.icon}>🏦</Text>
-          <Text style={styles.label}>Bank Transfer</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.paymentOption} onPress={handleMobileWallet}>
-          <Text style={styles.icon}>📱</Text>
-          <Text style={styles.label}>Mobile Wallet</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.paymentOption} onPress={handleQRCode}>
-          <Text style={styles.icon}>⬜</Text>
-          <Text style={styles.label}>QR Code</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.paymentOption} onPress={handleUSSDPayment}>
-          <Text style={styles.icon}>☎️</Text>
-          <Text style={styles.label}>USSD</Text>
-        </TouchableOpacity>
-      </View>
-      {/* ...you can add more payment UI or logic below as needed... */}
-    </ScrollView>
+        <Text style={styles.title}>Choose Payment Method</Text>
+        <View style={styles.paymentOptions}>
+          <TouchableOpacity style={styles.paymentOption} onPress={handleBankTransfer}>
+            <Text style={styles.icon}>🏦</Text>
+            <Text style={styles.label}>Bank Transfer</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.paymentOption} onPress={handleMobileWallet}>
+            <Text style={styles.icon}>📱</Text>
+            <Text style={styles.label}>Mobile Wallet</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.paymentOption} onPress={handleQRCode}>
+            <Text style={styles.icon}>⬜</Text>
+            <Text style={styles.label}>QR Code</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.paymentOption} onPress={handleUSSDPayment}>
+            <Text style={styles.icon}>☎️</Text>
+            <Text style={styles.label}>USSD</Text>
+          </TouchableOpacity>
+        </View>
+        {/* ...you can add more payment UI or logic below as needed... */}
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 

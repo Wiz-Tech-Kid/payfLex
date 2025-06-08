@@ -1,20 +1,19 @@
-// screens/BankTransferScreen.tsx
 
 import { Ionicons } from '@expo/vector-icons';
 import * as React from 'react';
 import { useState } from 'react';
 import {
-    ActivityIndicator,
-    KeyboardAvoidingView,
-    Platform,
-    SafeAreaView,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    useColorScheme,
-    View,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  useColorScheme,
+  View,
 } from 'react-native';
 
 export default function BankTransferScreen() {
@@ -28,7 +27,7 @@ export default function BankTransferScreen() {
   const [verifying, setVerifying] = useState(false);
 
   const handleProceed = () => {
-    // Start a mock "verifying" animation
+  
     setVerifying(true);
     setTimeout(() => {
       setVerifying(false);
@@ -48,10 +47,12 @@ export default function BankTransferScreen() {
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 24}
       >
         <ScrollView
-          contentContainerStyle={styles.container}
+          contentContainerStyle={[styles.container, { flexGrow: 1, justifyContent: 'center', paddingBottom: 32 }]}
           keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
         >
           <Text
             style={[

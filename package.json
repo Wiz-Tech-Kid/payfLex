@@ -91,12 +91,8 @@
     "@types/body-parser": "^1.19.5",
     "@types/cors": "^2.8.18",
     "@types/express": "^5.0.2",
-<<<<<<< HEAD
     "@types/react": "^19.1.6",
     "@types/react-native-linear-gradient": "^2.3.1",
-=======
-    "@types/react": "~19.0.10",
->>>>>>> fab05bb5abfce8e2193d4e0c946293557e275116
     "@types/react-native-vector-icons": "^6.4.18",
     "@types/uuid": "^10.0.0",
     "eslint": "^9.25.0",

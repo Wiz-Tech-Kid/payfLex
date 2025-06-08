@@ -14,7 +14,7 @@ import {
 } from "react-native";
 import SidebarDrawer from '../../../components/ui/SidebarDrawer';
 
-// Mock data - replace with your actual data fetching logic
+
 const mockUser = {
   firstName: "John",
   email: "john@example.com",
@@ -57,7 +57,7 @@ export default function Home() {
   const [isLoading] = useState(false);
   const [loans] = useState(mockLoans);
   const [payments] = useState(mockPayments);
-  // Sidebar (Drawer) state
+  
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const activeLoan = loans.find((loan: any) => loan.status === "active");
@@ -93,9 +93,7 @@ export default function Home() {
   };
   const handleLogout = () => {
     setSidebarOpen(false);
-    // Remove or replace the following line as there is no Landing screen
-    // router.replace('/(tabs)/screens/Landing');
-    // Optionally, navigate to the login screen or index
+   
     router.replace('/(tabs)/screens/Login');
   };
 
@@ -147,7 +145,12 @@ export default function Home() {
         onLogout={handleLogout}
       />
       {/* Main Content */}
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={{ paddingBottom: 32 }}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.userInfo}>
@@ -230,62 +233,58 @@ export default function Home() {
           )}
 
           {/* Quick Actions */}
-<View style={styles.section}>
-  <Text style={styles.sectionTitle}>Quick Actions</Text>
-  <View style={styles.quickActionsGrid}>
-    <TouchableOpacity
-      style={[styles.quickActionCard, styles.paymentCard]}
-      onPress={handleMakePayment}
-      activeOpacity={0.8}
-    >
-      <View style={styles.quickActionIconContainer}>
-        <Text style={styles.quickActionIcon}>💳</Text>
-      </View>
-      <Text style={styles.quickActionTitle}>Make Payment</Text>
-      <Text style={styles.quickActionSubtitle}>Pay your loan instantly</Text>
-    </TouchableOpacity>
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Quick Actions</Text>
+            <View style={styles.quickActionsGrid}>
+              <TouchableOpacity
+                style={[styles.quickActionCard, styles.paymentCard]}
+                onPress={handleMakePayment}
+                activeOpacity={0.8}
+              >
+                <View style={styles.quickActionIconContainer}>
+                  <Text style={styles.quickActionIcon}>💳</Text>
+                </View>
+                <Text style={styles.quickActionTitle}>Make Payment</Text>
+                <Text style={styles.quickActionSubtitle}>Pay your loan instantly</Text>
+              </TouchableOpacity>
 
-    <TouchableOpacity
-      style={[styles.quickActionCard, styles.newLoanCard]}
-      onPress={handleNewLoan}
-      activeOpacity={0.8}
-    >
-      <View style={styles.quickActionIconContainer}>
-        <Text style={styles.quickActionIcon}>🚗</Text>
-      </View>
-      <Text style={styles.quickActionTitle}>New Loan</Text>
-      <Text style={styles.quickActionSubtitle}>Apply for auto financing</Text>
-    </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.quickActionCard, styles.newLoanCard]}
+                onPress={handleNewLoan}
+                activeOpacity={0.8}
+              >
+                <View style={styles.quickActionIconContainer}>
+                  <Text style={styles.quickActionIcon}>🚗</Text>
+                </View>
+                <Text style={styles.quickActionTitle}>New Loan</Text>
+                <Text style={styles.quickActionSubtitle}>Apply for auto financing</Text>
+              </TouchableOpacity>
 
-    <TouchableOpacity
-      style={[styles.quickActionCard, styles.calculatorCard]}
-      onPress={handleLoanCalculator}
-      activeOpacity={0.8}
-    >
-      <View style={styles.quickActionIconContainer}>
-        <Text style={styles.quickActionIcon}>🧮</Text>
-      </View>
-      <Text style={styles.quickActionTitle}>Calculator</Text>
-      <Text style={styles.quickActionSubtitle}>Estimate your payments</Text>
-    </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.quickActionCard, styles.calculatorCard]}
+                onPress={handleLoanCalculator}
+                activeOpacity={0.8}
+              >
+                <View style={styles.quickActionIconContainer}>
+                  <Text style={styles.quickActionIcon}>🧮</Text>
+                </View>
+                <Text style={styles.quickActionTitle}>Calculator</Text>
+                <Text style={styles.quickActionSubtitle}>Estimate your payments</Text>
+              </TouchableOpacity>
 
-    <TouchableOpacity
-      style={[styles.quickActionCard, styles.digitalIdCard]}
-<<<<<<< HEAD:app/(tabs)/screens/HomeTabs.tsx
-      onPress={() => router.push('/(tabs)/screens/DigitalIDScreen')}
-=======
-      onPress={() => router.push('/screens/DigitalIDScreen')}
->>>>>>> fab05bb5abfce8e2193d4e0c946293557e275116:app/screens/HomeTabs.tsx
-      activeOpacity={0.8}
-    >
-      <View style={styles.quickActionIconContainer}>
-        <Text style={styles.quickActionIcon}>🆔</Text>
-      </View>
-      <Text style={styles.quickActionTitle}>Digital ID</Text>
-      <Text style={styles.quickActionSubtitle}>View your profile</Text>
-    </TouchableOpacity>
-  </View>
-</View>
+              <TouchableOpacity
+                style={[styles.quickActionCard, styles.digitalIdCard]}
+                onPress={() => router.push('/(tabs)/screens/DigitalIDScreen')}
+                activeOpacity={0.8}
+              >
+                <View style={styles.quickActionIconContainer}>
+                  <Text style={styles.quickActionIcon}>🆔</Text>
+                </View>
+                <Text style={styles.quickActionTitle}>Digital ID</Text>
+                <Text style={styles.quickActionSubtitle}>View your profile</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
           {/* Payment Methods */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Payment Options</Text>
@@ -366,7 +365,6 @@ export default function Home() {
           </View>
         </View>
       </ScrollView>
-      {/* Removed mock bottom navigation */}
     </SafeAreaView>
   );
 }

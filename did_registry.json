@@ -1,1 +1,29 @@
-[]
+[
+  {
+    "fullName": "Sentsima",
+    "email": "nicole.bobo66@gmail.com",
+    "phone": "+26772995028",
+    "omangId": "716310921",
+    "gender": "",
+    "did": "did:payflex:0033fe22-8a46-4fad-bc06-1e3ae8366e1f",
+    "createdAt": "2025-06-08T17:31:01.705095+00"
+  },
+  {
+    "fullName": "Pearl",
+    "email": "peanteda@gmail.com",
+    "phone": "+26774541521",
+    "omangId": "346923923",
+    "gender": "",
+    "did": "did:payflex:08980ad8-44e6-4a16-b5b5-da35ab60ea17",
+    "createdAt": "2025-06-07T22:51:39.390468+00"
+  },
+  {
+    "fullName": "Nickel Bobo N Sentsima",
+    "email": "noboh52306lenfly@gmail.com",
+    "phone": "+26772995028",
+    "omangId": "714000934",
+    "gender": "Female",
+    "did": "did:payflex:acc08a14-81dd-4f14-a6c5-104544080a94",
+    "createdAt": "2025-06-08T17:46:03.418886+00"
+  }
+]
